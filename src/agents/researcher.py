@@ -101,6 +101,6 @@ class ResearcherAgent:
             queries=queries,
             candidate_count=len(corpus),
             selected_count=len(selected),
-            summary=f"Retrieved {len(corpus)} chunks from {len(sources)} sources and kept {len(selected)}.",
+            summary=f"Retrieved {len(corpus)} chunks from {len(sources)} sources and kept {len(selected)} chunks for answer generation.",
         )
         return sources, selected, log
