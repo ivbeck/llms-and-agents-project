@@ -53,7 +53,8 @@ class QuestionOrchestrator:
         state = self._states[qid]
         try:
             rag = AdvancedMultiAgentRAGSystem(self.settings)
-            self._set_step(qid, "QueryPlanning", "running")
+            for step_name in STEP_NAMES[:4]:
+                self._set_step(qid, step_name, "running")
             result = rag.answer_question(state.question)
             answer_result = AnswerResult(
                 answer=result.answer,
@@ -63,7 +64,8 @@ class QuestionOrchestrator:
                 sources_count=len(result.sources),
             )
             state.result = answer_result
-            self._set_step(qid, "Critic Loop", "done")
+            for step_name in STEP_NAMES[4:-1]:
+                self._set_step(qid, step_name, "done")
             state.status = "done"
             self._emit("QuestionStateChanged", (qid, "done", "Critic Loop"))
         except asyncio.CancelledError:
