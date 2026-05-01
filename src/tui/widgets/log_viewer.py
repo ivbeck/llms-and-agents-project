@@ -8,7 +8,7 @@ class LogViewer(Widget):
 
     @property
     def lines(self) -> list[str]:
-        return self._lines
+        return self._lines.copy()
 
     def append(self, message: str) -> None:
         self._lines.append(message)
