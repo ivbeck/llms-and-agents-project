@@ -4,6 +4,7 @@ def test_token_meter_defaults():
     tm = TokenMeter()
     assert tm.tokens_in == 0
     assert tm.tokens_out == 0
+    assert tm.tokens_reasoning == 0
 
 def test_token_meter_update():
     tm = TokenMeter()
