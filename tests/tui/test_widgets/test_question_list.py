@@ -11,3 +11,11 @@ def test_question_list_add():
     ql.add(state)
     assert len(ql.items) == 1
     assert ql.items[0].id == "q1"
+
+def test_question_list_remove():
+    ql = QuestionList()
+    state = QuestionState(id="q1", question="What is x?")
+    ql.add(state)
+    assert len(ql.items) == 1
+    ql.remove("q1")
+    assert len(ql.items) == 0

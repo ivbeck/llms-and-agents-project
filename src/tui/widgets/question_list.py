@@ -9,6 +9,8 @@ class QuestionList(Widget):
 
     def add(self, state: QuestionState) -> None:
         self.items.append(state)
+        self.refresh()
 
     def remove(self, qid: str) -> None:
         self.items = [s for s in self.items if s.id != qid]
+        self.refresh()
