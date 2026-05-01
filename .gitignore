@@ -1,1 +1,11 @@
 .env
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+
+# Environment
+.env
+.env.dist
+
+# Worktrees
+.worktrees/
