@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Callable
 
 class TokenTracker:
     def __init__(self) -> None:
