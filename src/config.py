@@ -2,18 +2,22 @@
 
 from __future__ import annotations
 
+from typing import Annotated
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    groq_api_key: str = Field(alias="GROQ_API_KEY")
-    tavily_api_key: str = Field(alias="TAVILY_API_KEY")
-    groq_model: str = Field(default="llama-3.3-70b-versatile", alias="GROQ_MODEL")
-    groq_temperature: float = Field(default=0.1, alias="GROQ_TEMPERATURE")
+    openrouter_api_key: Annotated[str, Field(alias="OPENROUTER_API_KEY")]
+    openrouter_model: Annotated[str, Field(default="anthropic/claude-3.5-sonnet", alias="OPENROUTER_MODEL")]
+    openrouter_temperature: Annotated[float, Field(default=0.1, alias="OPENROUTER_TEMPERATURE")]
+    openrouter_base_url: Annotated[str, Field(default="https://openrouter.ai/api/v1", alias="OPENROUTER_BASE_URL")]
 
-    embedding_model: str = Field(default="sentence-transformers/all-MiniLM-L6-v2", alias="EMBEDDING_MODEL")
-    cross_encoder_model: str = Field(default="cross-encoder/ms-marco-MiniLM-L-6-v2", alias="CROSS_ENCODER_MODEL")
+    tavily_api_key: Annotated[str, Field(alias="TAVILY_API_KEY")]
+
+    embedding_model: Annotated[str, Field(default="sentence-transformers/all-MiniLM-L6-v2", alias="EMBEDDING_MODEL")]
+    cross_encoder_model: Annotated[str, Field(default="cross-encoder/ms-marco-MiniLM-L-6-v2", alias="CROSS_ENCODER_MODEL")]
 
     max_search_results: int = Field(default=5, alias="MAX_SEARCH_RESULTS")
     top_k_chunks: int = Field(default=8, alias="TOP_K_CHUNKS")

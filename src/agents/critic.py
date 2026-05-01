@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from src.llm.groq_client import GroqLLM
+from src.llm.openrouter_client import OpenRouterLLM
 from src.models import ChunkEvidence, CriticResult
 from src.utils.parsing import extract_json_object
 
 
 class CriticAgent:
-    def __init__(self, llm: GroqLLM) -> None:
+    def __init__(self, llm: OpenRouterLLM) -> None:
         self.llm = llm
 
     def review(self, question: str, answer: str, evidence: list[ChunkEvidence]) -> CriticResult:
@@ -28,14 +28,14 @@ Answer:
 {answer}
 
 Evidence:
-{'\n'.join(evidence_block)}
+{'\\n'.join(evidence_block)}
 
 Return JSON only:
 {{
-  \"is_grounded\": true,
-  \"is_relevant\": true,
-  \"needs_revision\": false,
-  \"comment\": \"short explanation\"
+  "is_grounded": true,
+  "is_relevant": true,
+  "needs_revision": false,
+  "comment": "short explanation"
 }}
 """
         try:

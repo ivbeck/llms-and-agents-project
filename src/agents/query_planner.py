@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from src.llm.groq_client import GroqLLM
+from src.llm.openrouter_client import OpenRouterLLM
 from src.utils.parsing import extract_json_object
 
 
 class QueryPlannerAgent:
-    def __init__(self, llm: GroqLLM) -> None:
+    def __init__(self, llm: OpenRouterLLM) -> None:
         self.llm = llm
 
     def plan_baseline(self, question: str) -> list[str]:
@@ -27,7 +27,7 @@ Rules:
 - Queries should be retrieval-friendly.
 - Return JSON only:
 {{
-  \"queries\": [\"...\", \"...\", \"...\", \"...\"]
+  "queries": ["...", "...", "...", "..."]
 }}
 
 Question:
@@ -48,7 +48,7 @@ Question:
 Generate up to 3 new focused search queries that would help fill remaining information gaps.
 Return JSON only:
 {{
-  \"queries\": [\"...\", \"...\", \"...\"]
+  "queries": ["...", "...", "..."]
 }}
 
 Question:

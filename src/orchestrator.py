@@ -11,7 +11,7 @@ from src.agents.hyde import HyDEAgent
 from src.agents.query_planner import QueryPlannerAgent
 from src.agents.researcher import ResearcherAgent
 from src.config import Settings
-from src.llm.groq_client import GroqLLM
+from src.llm.openrouter_client import OpenRouterLLM
 from src.models import ChunkEvidence, CriticResult, FeatureFlags, FinalAnswer, SearchResult
 from src.retrieval.web_search import TavilySearcher
 
@@ -19,7 +19,7 @@ from src.retrieval.web_search import TavilySearcher
 class AdvancedMultiAgentRAGSystem:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
-        self.llm = GroqLLM(settings)
+        self.llm = OpenRouterLLM(settings)
         self.searcher = TavilySearcher(settings)
 
         self.query_planner = QueryPlannerAgent(self.llm)

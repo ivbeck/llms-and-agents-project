@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from src.llm.groq_client import GroqLLM
+from src.llm.openrouter_client import OpenRouterLLM
 from src.models import ChunkEvidence
 from src.utils.parsing import extract_json_object
 
 
 class EvidenceFilterAgent:
-    def __init__(self, llm: GroqLLM) -> None:
+    def __init__(self, llm: OpenRouterLLM) -> None:
         self.llm = llm
 
     def filter(self, question: str, evidence: list[ChunkEvidence], top_k: int) -> list[ChunkEvidence]:
@@ -31,14 +31,14 @@ Question:
 {question}
 
 Candidate chunks:
-{'\n'.join(evidence_block)}
+{'\\n'.join(evidence_block)}
 
 Task:
 Select the most relevant chunk ids. Remove irrelevant, redundant, or weakly related chunks.
 Return JSON only in this format:
 {{
-  \"keep_ids\": [1, 3, 5],
-  \"reason\": \"short explanation\"
+  "keep_ids": [1, 3, 5],
+  "reason": "short explanation"
 }}
 """
         try:

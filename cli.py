@@ -25,6 +25,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--disable-evidence-filtering", action="store_true")
     parser.add_argument("--disable-hyde", action="store_true")
 
+    parser.add_argument(
+        "--openrouter-model",
+        type=str,
+        default=None,
+        help="OpenRouter model to use (default: from settings)",
+    )
     parser.add_argument("--max-search-results", type=int, default=None)
     parser.add_argument("--top-k-chunks", type=int, default=None)
     parser.add_argument("--max-iterations", type=int, default=None)
@@ -55,6 +61,9 @@ def apply_cli_overrides(settings: Settings, args: argparse.Namespace) -> Setting
         settings.enable_evidence_filtering = False
     if args.disable_hyde:
         settings.enable_hyde = False
+
+    if args.openrouter_model is not None:
+        settings.openrouter_model = args.openrouter_model
 
     if args.max_search_results is not None:
         settings.max_search_results = args.max_search_results

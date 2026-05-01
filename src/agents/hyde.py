@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from src.llm.groq_client import GroqLLM
+from src.llm.openrouter_client import OpenRouterLLM
 
 
 class HyDEAgent:
-    def __init__(self, llm: GroqLLM) -> None:
+    def __init__(self, llm: OpenRouterLLM) -> None:
         self.llm = llm
 
     def generate(self, question: str) -> str:

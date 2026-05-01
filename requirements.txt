@@ -1,4 +1,7 @@
-groq>=0.18.0
+langchain>=0.3.0
+langchain-openrouter>=0.1.0
+langchain-core>=0.3.0
+openai>=1.30.0
 python-dotenv>=1.0.1
 pydantic>=2.7.0
 pydantic-settings>=2.2.1

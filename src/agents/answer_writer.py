@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from src.llm.groq_client import GroqLLM
+from src.llm.openrouter_client import OpenRouterLLM
 from src.models import ChunkEvidence
 
 
 class AnswerWriterAgent:
-    def __init__(self, llm: GroqLLM) -> None:
+    def __init__(self, llm: OpenRouterLLM) -> None:
         self.llm = llm
 
     def write(self, question: str, evidence: list[ChunkEvidence], critique: str | None = None) -> str:
@@ -40,6 +40,6 @@ Question:
 {question}
 
 Evidence:
-{'\n'.join(evidence_block)}
+{'\\n'.join(evidence_block)}
 """
         return self.llm.complete(system_prompt, user_prompt).strip()
