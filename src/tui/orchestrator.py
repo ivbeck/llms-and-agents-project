@@ -1,12 +1,13 @@
 from __future__ import annotations
+
 import asyncio
 import logging
 import uuid
-from typing import Callable
+from collections.abc import Callable
+from typing import Literal
 
 from src.config import Settings
 from src.orchestrator import AdvancedMultiAgentRAGSystem
-from src.tui.events import QuestionStateChanged, TokenAccumulated, LogAppended
 from src.tui.state import AnswerResult, QuestionState, StepState
 
 logger = logging.getLogger(__name__)
@@ -40,6 +41,8 @@ class QuestionOrchestrator:
         return qid
 
     def start_question(self, qid: str) -> None:
+        if qid not in self._states:
+            raise KeyError(f"No question found with id: {qid}")
         state = self._states[qid]
         state.status = "running"
         self._emit("QuestionStateChanged", (qid, "running", None))
@@ -63,18 +66,24 @@ class QuestionOrchestrator:
             self._set_step(qid, "Critic Loop", "done")
             state.status = "done"
             self._emit("QuestionStateChanged", (qid, "done", "Critic Loop"))
+        except asyncio.CancelledError:
+            state.status = "cancelled"
+            self._emit("QuestionStateChanged", (qid, "cancelled", None))
+            raise
         except Exception as exc:
             state.status = "failed"
             state.error = str(exc)
             self._emit("QuestionStateChanged", (qid, "failed", None))
             logger.exception("Question %s failed", qid)
 
-    def _set_step(self, qid: str, step_name: str, status: str) -> None:
+    def _set_step(self, qid: str, step_name: str, status: Literal["pending", "running", "done", "failed"]) -> None:
+        if qid not in self._states:
+            raise KeyError(f"No question found with id: {qid}")
         state = self._states[qid]
         state.current_step = step_name
         for step in state.steps:
             if step.name == step_name:
-                step.status = status  # type: ignore
+                step.status = status
                 break
         self._emit("QuestionStateChanged", (qid, state.status, step_name))
 
@@ -89,4 +98,4 @@ class QuestionOrchestrator:
         return self._states.get(qid)
 
     def get_all_states(self) -> list[QuestionState]:
-        return list(self._states.values())
+        return [state for state in self._states.values()]
