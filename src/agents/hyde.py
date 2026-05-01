@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+import logging
+
 from src.llm.openrouter_client import OpenRouterLLM
+
+logger = logging.getLogger(__name__)
 
 
 class HyDEAgent:
@@ -10,6 +14,7 @@ class HyDEAgent:
         self.llm = llm
 
     def generate(self, question: str) -> str:
+        logger.info("Generating HyDE document for question")
         system_prompt = (
             "You generate a short hypothetical answer document for retrieval purposes only. "
             "It should sound like a plausible source passage that could answer the question."
@@ -25,4 +30,6 @@ Rules:
 Question:
 {question}
 """
-        return self.llm.complete(system_prompt, user_prompt, temperature=0.2).strip()
+        result = self.llm.complete(system_prompt, user_prompt, temperature=0.2).strip()
+        logger.info("HyDE document generated, length=%d", len(result))
+        return result

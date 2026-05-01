@@ -4,18 +4,21 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 from pathlib import Path
 
 from src.config import Settings
+from src.logging_config import setup
 from src.orchestrator import AdvancedMultiAgentRAGSystem
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Advanced Groq + Tavily Multi-Agent RAG")
+    parser = argparse.ArgumentParser(description="Advanced OpenRouter + Tavily Multi-Agent RAG")
     parser.add_argument("question", type=str, help="Question to answer")
     parser.add_argument("--json", action="store_true", help="Print full result JSON")
     parser.add_argument("--save", type=Path, default=None, help="Optional path to save JSON result")
     parser.add_argument("--baseline", action="store_true", help="Disable all seven advanced add-ons")
+    parser.add_argument("--log-level", type=str, default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"], help="Logging level")
 
     parser.add_argument("--disable-hybrid-retrieval", action="store_true")
     parser.add_argument("--disable-cross-encoder-reranking", action="store_true")
@@ -79,7 +82,9 @@ def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
 
+    logger = setup("src", level=args.log_level)
     settings = apply_cli_overrides(Settings(), args)
+    logger.info("Starting RAG system with OpenRouter model: %s", settings.openrouter_model)
     system = AdvancedMultiAgentRAGSystem(settings)
     result = system.answer_question(args.question)
     result_json = result.model_dump()

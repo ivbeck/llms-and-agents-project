@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+import logging
+
 from src.llm.openrouter_client import OpenRouterLLM
 from src.models import ChunkEvidence
 from src.utils.parsing import extract_json_object
+
+logger = logging.getLogger(__name__)
 
 
 class EvidenceFilterAgent:
@@ -14,6 +18,8 @@ class EvidenceFilterAgent:
     def filter(self, question: str, evidence: list[ChunkEvidence], top_k: int) -> list[ChunkEvidence]:
         if not evidence:
             return []
+
+        logger.info("Filtering %d evidence chunks down to top %d", len(evidence), top_k)
 
         evidence_block = []
         for idx, item in enumerate(evidence, start=1):
@@ -46,6 +52,9 @@ Return JSON only in this format:
             data = extract_json_object(raw)
             keep_ids = [int(x) for x in data.get("keep_ids", [])]
             keep = [evidence[i - 1] for i in keep_ids if 1 <= i <= len(evidence)]
-            return keep[:top_k] if keep else evidence[:top_k]
-        except Exception:
+            result = keep[:top_k] if keep else evidence[:top_k]
+            logger.info("Evidence filtered: kept %d chunks", len(result))
+            return result
+        except Exception as e:
+            logger.warning("Evidence filtering failed: %s, returning top %d as fallback", e, top_k)
             return evidence[:top_k]

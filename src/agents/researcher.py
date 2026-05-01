@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from collections import OrderedDict
 
 from src.config import Settings
@@ -14,19 +15,25 @@ from src.retrieval.sparse import SparseRetriever
 from src.retrieval.web_search import TavilySearcher
 from src.utils.text import simple_tokens
 
+logger = logging.getLogger(__name__)
+
 
 class ResearcherAgent:
     def __init__(self, searcher: TavilySearcher, settings: Settings) -> None:
         self.searcher = searcher
         self.settings = settings
         self.reranker = CrossEncoderReranker(settings.cross_encoder_model) if settings.enable_cross_encoder_reranking else None
+        logger.info("ResearcherAgent initialized, reranker_enabled=%s", self.reranker is not None)
 
     def gather_sources(self, queries: list[str]) -> list[SearchResult]:
+        logger.info("Gathering sources for %d queries", len(queries))
         merged: OrderedDict[str, SearchResult] = OrderedDict()
         for query in queries:
+            logger.debug("Searching for: %s", query)
             for result in self.searcher.search(query):
                 if result.url and result.url not in merged:
                     merged[result.url] = result
+        logger.info("Gathered %d unique sources", len(merged))
         return list(merged.values())
 
     def build_chunk_corpus(self, sources: list[SearchResult], query_label: str) -> list[ChunkEvidence]:
@@ -47,6 +54,7 @@ class ResearcherAgent:
                         text=chunk,
                     )
                 )
+        logger.debug("Built corpus of %d chunks from %d sources", len(evidence), len(sources))
         return evidence
 
     def simple_score(self, question: str, evidence: list[ChunkEvidence]) -> list[ChunkEvidence]:
@@ -83,16 +91,20 @@ class ResearcherAgent:
         retrieval_text: str,
         iteration: int,
     ) -> tuple[list[SearchResult], list[ChunkEvidence], IterationLog]:
+        logger.info("Running researcher iteration %d", iteration)
         sources = self.gather_sources(queries)
         corpus = self.build_chunk_corpus(sources, query_label=" | ".join(queries))
 
         if self.settings.enable_hybrid_retrieval:
             candidates = self.hybrid_retrieve(retrieval_text, corpus)
+            logger.info("Hybrid retrieval: %d candidates from %d corpus chunks", len(candidates), len(corpus))
         else:
             candidates = self.simple_score(question, corpus)
+            logger.info("Simple scoring: %d candidates from %d corpus chunks", len(candidates), len(corpus))
 
         if self.settings.enable_cross_encoder_reranking:
             selected = self.rerank(question, candidates)
+            logger.info("Cross-encoder reranking: selected %d from %d candidates", len(selected), len(candidates))
         else:
             selected = candidates[: self.settings.rerank_top_k]
 

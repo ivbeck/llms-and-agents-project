@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from langchain_openrouter import ChatOpenRouter
-from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
-from langchain_core.outputs import ChatGeneration, ChatResult
 
 from src.config import Settings
+
+logger = logging.getLogger(__name__)
 
 
 class OpenRouterLLM:
@@ -20,6 +21,7 @@ class OpenRouterLLM:
             temperature=settings.openrouter_temperature,
             base_url=settings.openrouter_base_url,
         )
+        logger.info("OpenRouterLLM initialized with model=%s, temperature=%.1f", settings.openrouter_model, settings.openrouter_temperature)
 
     def _messages_to_dicts(self, system_prompt: str, user_prompt: str) -> list[dict[str, str]]:
         messages = []
@@ -34,10 +36,6 @@ class OpenRouterLLM:
             result = self.model.bind(temperature=temperature).invoke(messages)
         else:
             result = self.model.invoke(messages)
-        if isinstance(result, list):
-            return result[0].content if result else ""
-        return result.content
-
-    def bind(self, **kwargs: Any) -> "OpenRouterLLM":
-        self.model = self.model.bind(**kwargs)
-        return self
+        content = result.content if not isinstance(result, list) else (result[0].content if result else "")
+        logger.debug("LLM response length=%d, model=%s", len(content), self.settings.openrouter_model)
+        return content

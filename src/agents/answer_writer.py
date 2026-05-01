@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import logging
+
 from src.llm.openrouter_client import OpenRouterLLM
 from src.models import ChunkEvidence
+
+logger = logging.getLogger(__name__)
 
 
 class AnswerWriterAgent:
@@ -12,7 +16,10 @@ class AnswerWriterAgent:
 
     def write(self, question: str, evidence: list[ChunkEvidence], critique: str | None = None) -> str:
         if not evidence:
+            logger.warning("No evidence provided to answer writer, returning fallback answer")
             return "I could not find enough reliable evidence to answer the question."
+
+        logger.info("Writing answer with %d evidence chunks", len(evidence))
 
         evidence_block = []
         for idx, item in enumerate(evidence, start=1):
@@ -42,4 +49,6 @@ Question:
 Evidence:
 {'\\n'.join(evidence_block)}
 """
-        return self.llm.complete(system_prompt, user_prompt).strip()
+        result = self.llm.complete(system_prompt, user_prompt).strip()
+        logger.info("Answer written, length=%d", len(result))
+        return result

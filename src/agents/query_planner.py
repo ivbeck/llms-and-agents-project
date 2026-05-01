@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import logging
+
 from src.llm.openrouter_client import OpenRouterLLM
 from src.utils.parsing import extract_json_object
+
+logger = logging.getLogger(__name__)
 
 
 class QueryPlannerAgent:
@@ -14,6 +18,7 @@ class QueryPlannerAgent:
         return [question]
 
     def decompose(self, question: str) -> list[str]:
+        logger.info("Decomposing question into sub-queries")
         system_prompt = (
             "You are a query planning agent for a RAG system. "
             "Break complex user questions into focused web-search subqueries. "
@@ -36,7 +41,9 @@ Question:
         raw = self.llm.complete(system_prompt, user_prompt)
         data = extract_json_object(raw)
         queries = [str(x).strip() for x in data.get("queries", []) if str(x).strip()]
-        return queries[:4] if queries else [question]
+        result = queries[:4] if queries else [question]
+        logger.info("Decomposed into %d queries", len(result))
+        return result
 
     def next_iteration_queries(self, question: str, current_answer: str, critique: str) -> list[str]:
         system_prompt = (
