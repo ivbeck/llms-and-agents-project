@@ -124,12 +124,16 @@ class Dashboard(App):
     def action_add_question(self) -> None:
         qid = self.orchestrator.add_question("New question")
         self._selected_qid = qid
-        self.query_one("#question-list", QuestionList).selected_id = qid
+        ql = self.query_one("#question-list", QuestionList)
+        ql.set_states(self.orchestrator.get_all_states())
+        ql.selected_id = qid
         self.query_one("#question-card", QuestionCard).selected_id = qid
 
     def action_cancel_question(self) -> None:
         if self._selected_qid:
             self.orchestrator.cancel_question(self._selected_qid)
+            ql = self.query_one("#question-list", QuestionList)
+            ql.set_states(self.orchestrator.get_all_states())
 
     def action_quit(self) -> None:
         self.exit()
