@@ -52,10 +52,12 @@ class QuestionOrchestrator:
     async def _run_pipeline(self, qid: str) -> None:
         state = self._states[qid]
         try:
-            rag = AdvancedMultiAgentRAGSystem(self.settings)
-            for step_name in STEP_NAMES[:4]:
+            for step_name in STEP_NAMES:
                 self._set_step(qid, step_name, "running")
+            rag = AdvancedMultiAgentRAGSystem(self.settings)
             result = rag.answer_question(state.question)
+            for step_name in STEP_NAMES:
+                self._set_step(qid, step_name, "done")
             answer_result = AnswerResult(
                 answer=result.answer,
                 is_grounded=result.critic.is_grounded,
@@ -64,10 +66,7 @@ class QuestionOrchestrator:
                 sources_count=len(result.sources),
             )
             state.result = answer_result
-            for step_name in STEP_NAMES[4:-1]:
-                self._set_step(qid, step_name, "done")
             state.status = "done"
-            self._emit("QuestionStateChanged", (qid, "done", "Critic Loop"))
         except asyncio.CancelledError:
             state.status = "cancelled"
             self._emit("QuestionStateChanged", (qid, "cancelled", None))
