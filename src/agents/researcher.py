@@ -30,7 +30,12 @@ class ResearcherAgent:
         merged: OrderedDict[str, SearchResult] = OrderedDict()
         for query in queries:
             logger.debug("Searching for: %s", query)
-            for result in self.searcher.search(query):
+            try:
+                results = self.searcher.search(query)
+            except Exception as exc:
+                logger.warning("Search failed for query '%s': %s", query, exc)
+                continue
+            for result in results:
                 if result.url and result.url not in merged:
                     merged[result.url] = result
         logger.info("Gathered %d unique sources", len(merged))
@@ -48,6 +53,7 @@ class ResearcherAgent:
             for chunk in chunks:
                 evidence.append(
                     ChunkEvidence(
+                        evidence_id=f"E{len(evidence) + 1}",
                         title=source.title,
                         url=source.url,
                         query=query_label,

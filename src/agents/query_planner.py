@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 
 from src.llm.openrouter_client import OpenRouterLLM
+from src.models import QueryPlanResult
 from src.utils.parsing import extract_json_object
 
 logger = logging.getLogger(__name__)
@@ -38,9 +39,14 @@ Rules:
 Question:
 {question}
 """
-        raw = self.llm.complete(system_prompt, user_prompt)
-        data = extract_json_object(raw)
-        queries = [str(x).strip() for x in data.get("queries", []) if str(x).strip()]
+        try:
+            raw = self.llm.complete(system_prompt, user_prompt)
+            data = QueryPlanResult.model_validate(extract_json_object(raw))
+        except Exception as exc:
+            logger.warning("Query decomposition failed: %s", exc)
+            return [question]
+
+        queries = [str(x).strip() for x in data.queries if str(x).strip()]
         result = queries[:4] if queries else [question]
         logger.info("Decomposed into %d queries", len(result))
         return result
@@ -67,7 +73,12 @@ Current answer:
 Critique / missing points:
 {critique}
 """
-        raw = self.llm.complete(system_prompt, user_prompt)
-        data = extract_json_object(raw)
-        queries = [str(x).strip() for x in data.get("queries", []) if str(x).strip()]
+        try:
+            raw = self.llm.complete(system_prompt, user_prompt)
+            data = QueryPlanResult.model_validate(extract_json_object(raw))
+        except Exception as exc:
+            logger.warning("Follow-up query generation failed: %s", exc)
+            return []
+
+        queries = [str(x).strip() for x in data.queries if str(x).strip()]
         return queries[:3]

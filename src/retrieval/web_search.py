@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import time
 
 from tavily import TavilyClient
 
@@ -20,16 +21,26 @@ class TavilySearcher:
 
     def search(self, query: str, max_results: int | None = None) -> list[SearchResult]:
         logger.info("Tavily search: query='%s', max_results=%s", query[:60], max_results or self.settings.max_search_results)
-        response = self.client.search(
-            query=query,
-            topic="general",
-            search_depth="advanced",
-            max_results=max_results or self.settings.max_search_results,
-            include_answer=False,
-            include_raw_content=True,
-        )
+        response = None
+        for attempt in range(1, 4):
+            try:
+                response = self.client.search(
+                    query=query,
+                    topic="general",
+                    search_depth="advanced",
+                    max_results=max_results or self.settings.max_search_results,
+                    include_answer=False,
+                    include_raw_content=True,
+                )
+                break
+            except Exception as exc:
+                logger.warning("Tavily search failed on attempt %d/3: %s", attempt, exc)
+                if attempt == 3:
+                    return []
+                time.sleep(0.5 * attempt)
+
         results: list[SearchResult] = []
-        for item in response.get("results", []):
+        for item in (response or {}).get("results", []):
             results.append(
                 SearchResult(
                     title=item.get("title", "Untitled"),

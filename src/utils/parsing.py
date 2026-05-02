@@ -7,14 +7,22 @@ import re
 from typing import Any
 
 
-def extract_json_object(text: str) -> dict[str, Any]:
-    text = text.strip()
-    fenced = re.search(r"```json\s*(\{.*?\})\s*```", text, re.DOTALL)
-    if fenced:
-        return json.loads(fenced.group(1))
+def _strip_json_fence(text: str) -> str:
+    fenced = re.fullmatch(r"\s*```(?:json)?\s*(.*?)\s*```\s*", text, re.DOTALL)
+    return fenced.group(1).strip() if fenced else text.strip()
 
-    start = text.find("{")
-    end = text.rfind("}")
-    if start == -1 or end == -1 or end < start:
-        raise ValueError(f"Could not extract JSON from model output: {text}")
-    return json.loads(text[start:end + 1])
+
+def extract_json_object(text: str) -> dict[str, Any]:
+    """Extract the first valid JSON object from an LLM response."""
+    text = _strip_json_fence(text)
+    decoder = json.JSONDecoder()
+
+    for match in re.finditer(r"\{", text):
+        try:
+            parsed, _ = decoder.raw_decode(text[match.start():])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(parsed, dict):
+            return parsed
+
+    raise ValueError(f"Could not extract JSON object from model output: {text}")

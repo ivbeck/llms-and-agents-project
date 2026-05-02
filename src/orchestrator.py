@@ -75,6 +75,8 @@ class AdvancedMultiAgentRAGSystem:
                     old.score_hybrid = max(old.score_hybrid, item.score_hybrid)
                     old.score_rerank = max(old.score_rerank, item.score_rerank)
                     old.score_final = max(old.score_final, item.score_final)
+                    if not old.selected_reason and item.selected_reason:
+                        old.selected_reason = item.selected_reason
         values = list(merged.values())
         values.sort(key=lambda x: x.score_final, reverse=True)
         return values

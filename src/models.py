@@ -23,15 +23,31 @@ class SearchResult(BaseModel):
 
 
 class ChunkEvidence(BaseModel):
+    evidence_id: str = ""
     title: str
     url: str
     query: str
     text: str
+    selected_reason: str | None = None
     score_sparse: float = 0.0
     score_dense: float = 0.0
     score_hybrid: float = 0.0
     score_rerank: float = 0.0
     score_final: float = 0.0
+
+
+class QueryPlanResult(BaseModel):
+    queries: list[str] = Field(default_factory=list)
+
+
+class EvidenceKeepItem(BaseModel):
+    id: int
+    reason: str = ""
+
+
+class EvidenceFilterResult(BaseModel):
+    keep: list[EvidenceKeepItem] = Field(default_factory=list)
+    reason: str = ""
 
 
 class CriticResult(BaseModel):
