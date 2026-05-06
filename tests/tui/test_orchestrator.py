@@ -19,7 +19,7 @@ def test_orchestrator_add_question():
     state = orch._states[qid]
     assert state.question == "What is AI?"
     assert state.status == "pending"
-    assert len(state.steps) == 8
+    assert len(state.steps) == 9
     step_names = [s.name for s in state.steps]
     assert step_names == [
         "QueryPlanning",
@@ -28,6 +28,7 @@ def test_orchestrator_add_question():
         "Retrieval",
         "Reranking",
         "Evidence Filter",
+        "Evidence Sufficiency",
         "Answer Write",
         "Critic Loop",
     ]
@@ -46,6 +47,7 @@ def test_orchestrator_start_question():
     mock_settings.enable_iterative_retrieval = False
     mock_settings.enable_self_rag = False
     mock_settings.enable_evidence_filtering = False
+    mock_settings.enable_evidence_sufficiency = False
     mock_settings.enable_query_decomposition = False
     mock_settings.enable_cross_encoder_reranking = False
     mock_settings.enable_hybrid_retrieval = False

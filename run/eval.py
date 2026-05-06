@@ -88,6 +88,7 @@ def configure_setup(settings: Any, setup: str) -> Any:
         settings.enable_iterative_retrieval = False
         settings.enable_self_rag = False
         settings.enable_evidence_filtering = False
+        settings.enable_evidence_sufficiency = False
         settings.enable_hyde = False
     return settings
 
