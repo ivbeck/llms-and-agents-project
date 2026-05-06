@@ -4,18 +4,21 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 from pathlib import Path
 
 from src.config import Settings
+from src.logging_config import setup
 from src.orchestrator import AdvancedMultiAgentRAGSystem
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Advanced Groq + Tavily Multi-Agent RAG")
+    parser = argparse.ArgumentParser(description="Advanced OpenRouter + Tavily Multi-Agent RAG")
     parser.add_argument("question", type=str, help="Question to answer")
     parser.add_argument("--json", action="store_true", help="Print full result JSON")
     parser.add_argument("--save", type=Path, default=None, help="Optional path to save JSON result")
-    parser.add_argument("--baseline", action="store_true", help="Disable all seven advanced add-ons")
+    parser.add_argument("--baseline", action="store_true", help="Disable all advanced add-ons")
+    parser.add_argument("--log-level", type=str, default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"], help="Logging level")
 
     parser.add_argument("--disable-hybrid-retrieval", action="store_true")
     parser.add_argument("--disable-cross-encoder-reranking", action="store_true")
@@ -23,11 +26,20 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--disable-iterative-retrieval", action="store_true")
     parser.add_argument("--disable-self-rag", action="store_true")
     parser.add_argument("--disable-evidence-filtering", action="store_true")
+    parser.add_argument("--disable-evidence-sufficiency", action="store_true")
     parser.add_argument("--disable-hyde", action="store_true")
 
+    parser.add_argument(
+        "--openrouter-model",
+        type=str,
+        default=None,
+        help="OpenRouter model to use (default: from settings)",
+    )
     parser.add_argument("--max-search-results", type=int, default=None)
     parser.add_argument("--top-k-chunks", type=int, default=None)
     parser.add_argument("--max-iterations", type=int, default=None)
+    parser.add_argument("--max-evidence-retries", type=int, default=None)
+    parser.add_argument("--performance", action="store_true", help="Enable performance analysis for this run")
     return parser
 
 
@@ -39,6 +51,7 @@ def apply_cli_overrides(settings: Settings, args: argparse.Namespace) -> Setting
         settings.enable_iterative_retrieval = False
         settings.enable_self_rag = False
         settings.enable_evidence_filtering = False
+        settings.enable_evidence_sufficiency = False
         settings.enable_hyde = False
 
     if args.disable_hybrid_retrieval:
@@ -53,8 +66,13 @@ def apply_cli_overrides(settings: Settings, args: argparse.Namespace) -> Setting
         settings.enable_self_rag = False
     if args.disable_evidence_filtering:
         settings.enable_evidence_filtering = False
+    if args.disable_evidence_sufficiency:
+        settings.enable_evidence_sufficiency = False
     if args.disable_hyde:
         settings.enable_hyde = False
+
+    if args.openrouter_model is not None:
+        settings.openrouter_model = args.openrouter_model
 
     if args.max_search_results is not None:
         settings.max_search_results = args.max_search_results
@@ -62,6 +80,10 @@ def apply_cli_overrides(settings: Settings, args: argparse.Namespace) -> Setting
         settings.top_k_chunks = args.top_k_chunks
     if args.max_iterations is not None:
         settings.max_iterations = args.max_iterations
+    if args.max_evidence_retries is not None:
+        settings.max_evidence_retries = args.max_evidence_retries
+    if args.performance:
+        settings.enable_performance_analysis = True
 
     return settings
 
@@ -70,7 +92,9 @@ def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
 
+    logger = setup("src", level=args.log_level)
     settings = apply_cli_overrides(Settings(), args)
+    logger.info("Starting RAG system with OpenRouter model: %s", settings.openrouter_model)
     system = AdvancedMultiAgentRAGSystem(settings)
     result = system.answer_question(args.question)
     result_json = result.model_dump()
@@ -138,6 +162,25 @@ def main() -> None:
     for step in result.ledger:
         print(f"Iteration {step.iteration}: {step.summary}")
     print()
+
+    if result.performance is not None:
+        print("=" * 88)
+        print("PERFORMANCE")
+        print("=" * 88)
+        print(f"Total: {result.performance.total_duration_ms:.2f} ms")
+        print(
+            "Tokens: "
+            f"total={result.performance.token_usage.total_tokens}, "
+            f"prompt={result.performance.token_usage.prompt_tokens}, "
+            f"completion={result.performance.token_usage.completion_tokens}, "
+            f"reasoning={result.performance.token_usage.reasoning_tokens}, "
+            f"llm_calls={result.performance.token_usage.calls}"
+        )
+        for span in sorted(result.performance.spans, key=lambda item: item.duration_ms, reverse=True):
+            details = ", ".join(f"{key}={value}" for key, value in span.metadata.items())
+            suffix = f" | {details}" if details else ""
+            print(f"{span.duration_ms:10.2f} ms | {span.name}{suffix}")
+        print()
 
 
 if __name__ == "__main__":

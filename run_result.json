@@ -1,0 +1,250 @@
+{
+  "question": "Wie heißt der aktuelle Trainer der ersten Mannschaft der SG Böhl-Iggelheim?",
+  "queries": [
+    "SG Böhl-Iggelheim Trainer 2024",
+    "SG Böhl-Iggelheim erste Mannschaft aktueller Coach",
+    "SG Böhl-Iggelheim Fußball Verein Trainerwechsel",
+    "SG Böhl Iggelheim Sportgemeinschaft Trainer"
+  ],
+  "hyde_document": "Die erste Mannschaft der SG Böhl-Iggelheim wird seit dem Sommer 2023 von Jens Walter trainieren. Walter, der zuvor den FC 08 Kirchheim in der Verbandsliga Südwest coachte, wurde im Juli vom Vorstand des Vereins als Nachfolger von Michael Huber vorgestellt. Mit seiner langjährigen Erfahrung im Jugendbereich und einem Fokus auf technische Spielweise soll er die Mannschaft fit für die anstehende Oberligasaison machen. In der Pressemitteilung betonte Walter die Bedeutung einer stabilen Defensive und einer variablen Mittelfeldorganisation. Unter seiner Leitung absolvierte das Team ein intensives Trainingslager in der Sportschule Edenkoben, wo neben taktischen Einheiten auch videobasierte Analysen durchgeführt wurden. Die bisherigen Ergebnisse der Vorbereitung – darunter Siege gegen den SV 03 Tübingen und ein Unentschieden gegen den SC Pfullendorf – lassen auf eine positive Entwicklung schließen. Der Verein erhofft sich durch Walters Engagement eine langfristige sportliche Stabilisierung in der Oberliga Rheinland‑Pfalz/Saar.",
+  "answer": "Der aktuelle Trainer der ersten Mannschaft der SG Böhl‑Iggelheim ist Max Barthel [E56].\n\n**Warum diese Quellen relevant waren**  \nDer Artikel vom 13.03.2023 meldet, dass die SG Böhl‑Iggelheim Max Barthel als zukünftigen Trainer verpflichtet hat, und ist damit die einzige vorliegende Quelle, die einen Namen für die Trainerposition nennt. Da keine aktuelleren Informationen verfügbar sind, kann davon ausgegangen werden, dass er die Position innehat.",
+  "critic": {
+    "is_grounded": true,
+    "is_relevant": true,
+    "needs_revision": false,
+    "comment": "The evidence supports that Max Barthel was hired as future trainer of SG Böhl-Iggelheim in March 2023. While no more recent information confirms his current status, there is no contradicting evidence, and the claim is consistent with the available source."
+  },
+  "sources": [
+    {
+      "title": "VfB Iggelheim - Nachrichten und Informationen im Überblick",
+      "url": "https://www.rheinpfalz.de/themen/vfb-iggelheim",
+      "content": "Palatia Böhl und VfB Iggelheim verschmelzen zur SG Böhl-Iggelheim. Die Fusion war ein Prozess mit einigen Hürden – und die Macher haben noch einige Aufgaben vor sich.\n\n## Verwandte Themen\n\n- Familie\n- CDU\n- CDU/CSU\n- München\n- Mannheim\n- Berlin\n- Karlsruhe\n- Fußball\n- Freiburg\n- Frankfurt am Main\n\nBöhl-Iggelheim 04.06.2022 / 10:03 Uhr\n\n## RHEINPFALZ Plus Artikel Geplante Vereinsfusion: Die Kuh vom Eis geholt\n\nDer VfB Iggelheim hat sich gefangen, mit einem neuen Vorstand wird die Fusion mit Palatia Böhl doch wieder wahrscheinlicher. Doch Zweifler bleiben – und die Zeit drängt.\n\nBöhl-Iggelheim 30.05.2022 / 19:30 Uhr\n\n## RHEINPFALZ Plus Artikel Bürgermeisterkandidat Harald Reichel: Verhalten optimistisch [...] Drei Fragen an… 13.03.2023 / 15:31 Uhr\n\n## RHEINPFALZ Plus Artikel Künftiger SG-Trainer Barthel: „Fühlt sich für mich richtig an“\n\nNachdem die SG Böhl-Iggelheim, die zur Zeit in der Fußball-A-Klasse Rhein-Mittelhaardt einen Abstiegsplatz belegt, die Verpflichtung von Max Barthel als zukünftigen Trainer...\n\nFussball 30.11.2022 / 17:22 Uhr\n\n## RHEINPFALZ Plus Artikel Zwei zeitintensive Jobs im VfB Haßloch für Dennis Kindler\n\nDennis Kindler (29) nimmt beim VfB Haßloch zwei zeitintensive Aufgaben wahr. Er ist Trainer der Zweiten Mannschaft und Jugendleiter. Seine Spieler haben schon öfter in der...\n\nBöhl-Iggelheim 15.11.2022 / 13:14 Uhr\n\n## RHEINPFALZ Plus Artikel Jede Menge Gefühlschaos an Heiligabend [...] BÖHL-IGGELHEIM 02.11.2021 / 16:26 Uhr\n\n## RHEINPFALZ Plus Artikel Fußball: SG-Böhl-Iggelheim in der Findungsphase\n\nZwei Spieltage vor Beendigung der Hauptrunde steht fest, dass die neue formierte Spielgemeinschaft (SG) Böhl-Iggelheim im Frühjahr in der Abstiegsrunde der Fußball-A-Klasse...\n\nFussball 10.05.2021 / 17:30 Uhr\n\n## RHEINPFALZ Plus Artikel Was der VfB Iggelheim und der FC Palatia Böhl planen\n\nIn der letzten Saison, bevor der VfB Iggelheim mit Palatia Böhl eine Spielgemeinschaft bildet, haben die Gelb-Schwarzen überzeugt und belegten in der Fußball-A-Klasse...\n\nDrei Fragen an… 22.03.2021 / 18:13 Uhr\n\n## RHEINPFALZ Plus Artikel „Mit einem solchen Verlauf war nicht zu rechnen“",
+      "raw_content": "[![DIE RHEINPFALZ](/pu_rhp//images/rheinpfalz-logo.svg)](/ \"DIE RHEINPFALZ\")\n\n[Digital Standard Abo](https://abo.rheinpfalz.de/digital-standard-abo)\n\n* [Startseite](https://www.rheinpfalz.de/)\n* [Nachrichten und Informationen im Überblick](https://www.rheinpfalz.de/themen.html)\n\nAktuelle Nachrichten und Informationen zum Thema\n\n# VfB Iggelheim\n\n[Fußball 25.09.2025 / 05:55 Uhr\n\n## Als ein Dorfverein aus der Westpfalz in Ludwigshafen um die große Bühne spielte\n\nDas Ludwigshafener Südweststadion war einst Austragungsort für Bundesliga-Aufstiegsspiele eines Vereins, der untrennbar mit dem Namen Fritz Walter verbunden ist.](/lokal/ludwigshafen_artikel,-als-ein-dorfverein-aus-der-westpfalz-in-ludwigshafen-um-die-gro%C3%9Fe-b%C3%BChne-spielte-_arid,5815778.html)\n\n[Fußball 24.09.2025 / 04:44 Uhr\n\n## RHEINPFALZ Plus Artikel SG Böhl-Iggelheim ist der Trendsetter in der B-Klasse Ost\n\nKlassensplitter: Welche Tugenden die SG Böhl-Iggelheim an die Spitze der B-Klasse Ost steht geführt haben](/lokal/ludwigshafen_artikel,-sg-b%C3%B6hl-iggelheim-ist-der-trendsetter-in-der-b-klasse-ost-_arid,5815058.html)\n\n[Böhl-Iggelheim 04.01.2025 / 06:00 Uhr\n\n## RHEINPFALZ Plus Artikel Böhl-Iggelheims Bürgermeister blickt in die Zukunft: Wärme, Windkraft und Bildung\n\nDie gleichen Witze, die gleichen Themen. Und doch ist eine Entwicklung in der Gemeinde Böhl-Iggelheim deutlich spürbar. Bürgermeister Peter Christ (CDU) hat in einer Sache...](/lokal/rhein-pfalz-kreis_artikel,-b%C3%B6hl-iggelheims-b%C3%BCrgermeister-blickt-in-die-zukunft-w%C3%A4rme-windkraft-und-bildung-_arid,5729629.html)\n\n[Fußball 03.12.2024 / 10:26 Uhr\n\n## RHEINPFALZ Plus Artikel Klassensplitter: SG Böhl-Iggelheim spielt in der B-Klasse Ost um den Aufstieg\n\nIn der ersten Saison nach dem Abstieg aus der Fußball-A-Klasse Rhein-Mittelhaardt hat sich die neu gegründete SG Böhl-Iggelheim, die aus einer Fusion des FC Palatia Böhl und...](/lokal/ludwigshafen_artikel,-klassensplitter-sg-b%C3%B6hl-iggelheim-spielt-in-der-b-klasse-ost-um-den-aufstieg-_arid,5719696.html)\n\n[Böhl-Iggelheim 09.07.2024 / 18:00 Uhr\n\n## RHEINPFALZ Plus Artikel SG-Fußballer: Auf der Suche nach mehr Platz\n\nDen Fußballern der SG Böhl-Iggelheim geht der Platz aus. Weshalb der Verein gerne auf ein Areal zwischen den beiden Ortsteilen umziehen möchte. Doch das ist sehr teuer. Das...](/lokal/rhein-pfalz-kreis_artikel,-sg-fu%C3%9Fballer-auf-der-suche-nach-mehr-platz-_arid,5668844.html)\n\n[Fußball 27.04.2023 / 14:30 Uhr\n\n## RHEINPFALZ Plus Artikel Der Haßlocher Schiedsrichter, der die meisten Spiele im Kreis pfeift\n\nAndreas Eberle ist seit 2022 nicht nur der älteste der zwölf Schiedsrichter des 1. FC 08 Haßloch. Er ist auch der Unparteiische des Kreises Rhein-Mittelhaardt, der die...](/lokal/neustadt_artikel,-der-ha%C3%9Flocher-schiedsrichter-der-die-meisten-spiele-im-kreis-pfeift-_arid,5498464.html)\n\n[Böhl-Iggelheim 21.03.2023 / 11:57 Uhr\n\n## RHEINPFALZ Plus Artikel Wohnhäuser auf dem Sportplatz?\n\nKann die Kommune sich Wohnungen auf dem früheren Palatia-Fußballplatz im Ortsteil Böhl vorstellen? Im Grundsatz ist sich der Gemeinderat da einig. Auch wenn noch ein paar...](/lokal/rhein-pfalz-kreis_artikel,-wohnh%C3%A4user-auf-dem-sportplatz-_arid,5482948.html)\n\n[Drei Fragen an… 13.03.2023 / 15:31 Uhr\n\n## RHEINPFALZ Plus Artikel Künftiger SG-Trainer Barthel: „Fühlt sich für mich richtig an“\n\nNachdem die SG Böhl-Iggelheim, die zur Zeit in der Fußball-A-Klasse Rhein-Mittelhaardt einen Abstiegsplatz belegt, die Verpflichtung von Max Barthel als zukünftigen Trainer...](/lokal/ludwigshafen_artikel,-k%C3%BCnftiger-sg-trainer-barthel-f%C3%BChlt-sich-f%C3%BCr-mich-richtig-an-_arid,5479421.html)\n\n[Fussball 30.11.2022 / 17:22 Uhr\n\n## RHEINPFALZ Plus Artikel Zwei zeitintensive Jobs im VfB Haßloch für Dennis Kindler\n\nDennis Kindler (29) nimmt beim VfB Haßloch zwei zeitintensive Aufgaben wahr. Er ist Trainer der Zweiten Mannschaft und Jugendleiter. Seine Spieler haben schon öfter in der...](/lokal/neustadt_artikel,-zwei-zeitintensive-jobs-im-vfb-ha%C3%9Floch-f%C3%BCr-dennis-kindler-_arid,5437419.html)\n\n[Böhl-Iggelheim 15.11.2022 / 13:14 Uhr\n\n## RHEINPFALZ Plus Artikel Jede Menge Gefühlschaos an Heiligabend\n\nEine Scheidung, ein flirtfreudiger Italiener, und die Weihnachtsgans fehlt auch – na, das wird „E schäänie Bescheerung“. Derzeit laufen die Proben für das Stück.](/lokal/rhein-pfalz-kreis_artikel,-jede-menge-gef%C3%BChlschaos-an-heiligabend-_arid,5430451.html)\n\n[Böhl-Iggelheim 16.10.2022 / 19:00 Uhr\n\n## RHEINPFALZ Plus Artikel Theater-Premiere: Kuriose Kuppel-Show im Kuhstall\n\nMit „Rendezvous im Kuhstall“ feierte die Theatergruppe der SG Böhl-Iggelheim am Samstag eine gelungene Premiere.](/lokal/rhein-pfalz-kreis_artikel,-theater-premiere-kuriose-kuppel-show-im-kuhstall-_arid,5418423.html)\n\n[Kommentar 22.07.2022 / 18:42 Uhr\n\n## RHEINPFALZ Plus Artikel Zur Fusion von VfB und Palatia: Verlorene Zeit\n\nDie Verschmelzung des FC Palatia Böhl und VfB Iggelheim sollte ein mahnendes Beispiel sein.](/lokal/rhein-pfalz-kreis_artikel,-zur-fusion-von-vfb-und-palatia-verlorene-zeit-_arid,5384358.html)\n\n[Böhl-Iggelheim 22.07.2022 / 18:41 Uhr\n\n## RHEINPFALZ Plus Artikel Vereinsfusion ist durch: Vom Feind zum Freund\n\nPalatia Böhl und VfB Iggelheim verschmelzen zur SG Böhl-Iggelheim. Die Fusion war ein Prozess mit einigen Hürden – und die Macher haben noch einige Aufgaben vor sich.](/lokal/rhein-pfalz-kreis_artikel,-vereinsfusion-ist-durch-vom-feind-zum-freund-_arid,5384356.html)\n\n## Verwandte Themen\n\n- [Familie](/themen/familie)\n- [CDU](/themen/cdu)\n- [CDU/CSU](/themen/cdu-csu)\n- [München](/themen/muenchen)\n- [Mannheim](/themen/mannheim)\n- [Berlin](/themen/berlin)\n- [Karlsruhe](/themen/karlsruhe)\n- [Fußball](/themen/fussball)\n- [Freiburg](/themen/freiburg)\n- [Frankfurt am Main](/themen/frankfurt-am-main)\n\n[Böhl-Iggelheim 04.06.2022 / 10:03 Uhr\n\n## RHEINPFALZ Plus Artikel Geplante Vereinsfusion: Die Kuh vom Eis geholt\n\nDer VfB Iggelheim hat sich gefangen, mit einem neuen Vorstand wird die Fusion mit Palatia Böhl doch wieder wahrscheinlicher. Doch Zweifler bleiben – und die Zeit drängt.](/lokal/rhein-pfalz-kreis_artikel,-geplante-vereinsfusion-die-kuh-vom-eis-geholt-_arid,5363950.html)\n\n[Böhl-Iggelheim 30.05.2022 / 19:30 Uhr\n\n## RHEINPFALZ Plus Artikel Bürgermeisterkandidat Harald Reichel: Verhalten optimistisch\n\nVor acht Jahren wollte Harald Reichel Bürgermeister von Böhl-Iggelheim werden – und verlor. Nun tritt der Polizist im Unruhestand erneut an und malt sich gute Chancen aus.](/lokal/rhein-pfalz-kreis_artikel,-b%C3%BCrgermeisterkandidat-harald-reichel-verhalten-optimistisch-_arid,5361985.html)\n\n[Land und Leute 21.05.2022 / 13:13 Uhr\n\n## RHEINPFALZ Plus Artikel Die Wochenendkolumne: Von Fusionen und Freunden\n\nWas den Rhein-Pfalz-Kreis in dieser Woche bewegt hat. Abseitiges, Skurriles und nicht ganz ernst Gemeintes aus den Dörfern.](/lokal/rhein-pfalz-kreis_artikel,-die-wochenendkolumne-von-fusionen-und-freunden-_arid,5358068.html)\n\n[Böhl-Iggelheim 20.05.2022 / 20:21 Uhr\n\n## RHEINPFALZ Plus Artikel Gescheiterte Fusion von VfB und Palatia: Ein Scherbenhaufen\n\nDie Fusion zwischen dem FC Palatia Böhl und VfB Iggelheim ist gescheitert. Doch was heißt das nun? Die Situation ist vertrackt, aber nicht aussichtslos.](/lokal/rhein-pfalz-kreis_artikel,-gescheiterte-fusion-von-vfb-und-palatia-ein-scherbenhaufen-_arid,5358181.html)\n\n[Sport 19.05.2022 / 18:31 Uhr\n\n## VfB Iggelheim kippt Fusion mit Palatia Böhl\n\nDie Fusion zwischen dem VfB Iggelheim und Palatia Böhl ist vorerst gescheitert. Am Mittwochabend fehlten zwei Stimmen für eine Verschmelzung. Von den 101 anwesenden ...](/sport_artikel,-vfb-iggelheim-kippt-fusion-mit-palatia-b%C3%B6hl-_arid,5357569.html)\n\n[Böhl-Iggelheim 18.05.2022 / 17:33 Uhr\n\n## RHEINPFALZ Plus Artikel Auftakt zum Bürgermeister-Wahlkampf: Auf geht’s, Genossen\n\nHarald Reichel möchte für die SPD Bürgermeister von Böhl-Iggelheim werden. Nun hat er sein Programm vorgestellt. Im Zentrum steht Solidarität. Das Interesse ist da – auch...](/lokal/rhein-pfalz-kreis_artikel,-auftakt-zum-b%C3%BCrgermeister-wahlkampf-auf-gehts-genossen-_arid,5356992.html)\n\n[Interview 16.05.2022 / 16:17 Uhr\n\n## RHEINPFALZ Plus Artikel „So eine Gelegenheit wird es nicht mehr geben“\n\nInterview: Am Mittwoch und Donnerstag entscheiden die Mitglieder des FC Palatia Böhl und VfB Iggelheim, ob die beiden Vereine künftig fusionieren. Die Vorsitzenden Michael...](/lokal/ludwigshafen_artikel,-so-eine-gelegenheit-wird-es-nicht-mehr-geben-_arid,5355833.html)\n\n[Fussball 07.02.2022 / 15:36 Uhr\n\n## RHEINPFALZ Plus Artikel Die SG Böhl-Iggelheim II ist in einer Sandwich-Position\n\nIn der ersten gemeinsamen Saison stellte die SG Böhl-Iggelheim, ein Zusammenschluss von VfB Iggelheim und Palatia Böhl, drei Mannschaften, die in A-, B- und C-Klasse...](/lokal/ludwigshafen_artikel,-die-sg-b%C3%B6hl-iggelheim-ii-ist-in-einer-sandwich-position-_arid,5312849.html)\n\n[Böhl-Iggelheim 15.11.2021 / 11:34 Uhr\n\n## RHEINPFALZ Plus Artikel Theater beim VfB: Wo bleibt die Besinnlichkeit?\n\nEinen besinnlichen Heiligabend – den würde wohl auch Familie Eislein gerne erleben. Doch schon früh beginnt das Chaos. Es ist wahrlich „E schäänie Bescheerung“, die bald auf...](/lokal/rhein-pfalz-kreis_artikel,-theater-beim-vfb-wo-bleibt-die-besinnlichkeit-_arid,5278342.html)\n\n[BÖHL-IGGELHEIM 02.11.2021 / 16:26 Uhr\n\n## RHEINPFALZ Plus Artikel Fußball: SG-Böhl-Iggelheim in der Findungsphase\n\nZwei Spieltage vor Beendigung der Hauptrunde steht fest, dass die neue formierte Spielgemeinschaft (SG) Böhl-Iggelheim im Frühjahr in der Abstiegsrunde der Fußball-A-Klasse...](/lokal/ludwigshafen_artikel,-fu%C3%9Fball-sg-b%C3%B6hl-iggelheim-in-der-findungsphase-_arid,5273287.html)\n\n[Fussball 10.05.2021 / 17:30 Uhr\n\n## RHEINPFALZ Plus Artikel Was der VfB Iggelheim und der FC Palatia Böhl planen\n\nIn der letzten Saison, bevor der VfB Iggelheim mit Palatia Böhl eine Spielgemeinschaft bildet, haben die Gelb-Schwarzen überzeugt und belegten in der Fußball-A-Klasse...](/lokal/ludwigshafen_artikel,-was-der-vfb-iggelheim-und-der-fc-palatia-b%C3%B6hl-planen-_arid,5202154.html)\n\n[Drei Fragen an… 22.03.2021 / 18:13 Uhr\n\n## RHEINPFALZ Plus Artikel „Mit einem solchen Verlauf war nicht zu rechnen“\n\nChristoph Heß (26) ist Kapitän und Leistungsträger des VfB Iggelheim (A-Klasse Rhein-Mittelhaardt). Der defensive Mittelfeldspieler wechselte vor sieben Jahren zum VfB. Heß...](/lokal/ludwigshafen_artikel,-mit-einem-solchen-verlauf-war-nicht-zu-rechnen-_arid,5183218.html)\n\n* [1](/themen/vfb-iggelheim?seite=1)\n* [2](/themen/vfb-iggelheim?seite=2)\n* [3](/themen/vfb-iggelheim?seite=3)\n* … [26](/themen/vfb-iggelheim?seite=26)\n\n[Nächste Seite](/themen/vfb-iggelheim?seite=2 \"nächste Seite\")\n\nThemen-Übersicht\n\n* [a](/themen_l,a.html)\n* [b](/themen_l,b.html)\n* [c](/themen_l,c.html)\n* [d](/themen_l,d.html)\n* [e](/themen_l,e.html)\n* [f](/themen_l,f.html)\n* [g](/themen_l,g.html)\n* [h](/themen_l,h.html)\n* [i](/themen_l,i.html)\n* [j](/themen_l,j.html)\n* [k](/themen_l,k.html)\n* [l](/themen_l,l.html)\n* [m](/themen_l,m.html)\n* [n](/themen_l,n.html)\n* [o](/themen_l,o.html)\n* [p](/themen_l,p.html)\n* [q](/themen_l,q.html)\n* [r](/themen_l,r.html)\n* [s](/themen_l,s.html)\n* [t](/themen_l,t.html)\n* [u](/themen_l,u.html)\n* [v](/themen_l,v.html)\n* [w](/themen_l,w.html)\n* [x](/themen_l,x.html)\n* [y](/themen_l,y.html)\n* [z](/themen_l,z.html)"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "E56",
+      "title": "VfB Iggelheim - Nachrichten und Informationen im Überblick",
+      "url": "https://www.rheinpfalz.de/themen/vfb-iggelheim",
+      "query": "SG Böhl-Iggelheim Trainer 2024 | SG Böhl-Iggelheim erste Mannschaft aktueller Coach | SG Böhl-Iggelheim Fußball Verein Trainerwechsel | SG Böhl Iggelheim Sportgemeinschaft Trainer",
+      "text": "-sportplatz-_arid,5482948.html) [Drei Fragen an… 13.03.2023 / 15:31 Uhr ## RHEINPFALZ Plus Artikel Künftiger SG-Trainer Barthel: „Fühlt sich für mich richtig an“ Nachdem die SG Böhl-Iggelheim, die zur Zeit in der Fußball-A-Klasse Rhein-Mittelhaardt einen Abstiegsplatz belegt, die Verpflichtung von Max Barthel als zukünftigen Trainer...](/lokal/ludwigshafen_artikel,-k%C3%BCnftiger-sg-trainer-barthel-f%C3%BChlt-sich-f%C3%BCr-mich-richtig-an-_arid,5479421.html) [Fussball 30.11.2022 / 17:22 Uhr ## RHEINPFALZ Plus Artikel Zwei zeitintensive Jobs im VfB Haßloch für Dennis Kindler Dennis Kindler (29) nimmt beim VfB Haßloch zwei zeitintensive Aufgaben wahr. Er ist Trainer der Zweiten Mannschaft und Jugendleiter. Seine Spieler haben schon öfter in der...](/lokal/neustadt_artikel,-zwei-zeitintensive-jobs-im-vfb-ha%C3%9Floch-f%C3%BCr-dennis-kindler-_arid,5437419.html) [Böhl-Iggelheim 15.11.2022 / 13:14 Uhr ## RHEINPFALZ Plus Artikel Jede Menge Gefühlschaos an Heiligabend Eine Scheidung, ein flirtfreudiger Italiener, und die Weihnachtsgans fehlt auch – na, das wird „E schäänie Bescheerung“. Derzeit laufen die Proben für das Stück.](/lokal/rhein-pfalz-kreis_artikel,-jede-menge-gef%C3%BChlschaos",
+      "selected_reason": "The article explicitly mentions Max Barthel as the future trainer of SG Böhl-Iggelheim, which directly addresses the question about the current trainer.",
+      "score_sparse": 60.7472749153915,
+      "score_dense": 0.49978500604629517,
+      "score_hybrid": 0.6835820732289271,
+      "score_rerank": 3.9029905796051025,
+      "score_final": 3.9029905796051025
+    }
+  ],
+  "features": {
+    "hybrid_retrieval": true,
+    "cross_encoder_reranking": true,
+    "query_decomposition": true,
+    "iterative_retrieval": true,
+    "self_rag": true,
+    "evidence_filtering": true,
+    "hyde": true
+  },
+  "ledger": [
+    {
+      "iteration": 1,
+      "queries": [
+        "SG Böhl-Iggelheim Trainer 2024",
+        "SG Böhl-Iggelheim erste Mannschaft aktueller Coach",
+        "SG Böhl-Iggelheim Fußball Verein Trainerwechsel",
+        "SG Böhl Iggelheim Sportgemeinschaft Trainer"
+      ],
+      "candidate_count": 97,
+      "selected_count": 8,
+      "summary": "Retrieved 97 chunks from 12 sources and kept 8 chunks for answer generation."
+    }
+  ],
+  "performance": {
+    "total_duration_ms": 158512.8,
+    "spans": [
+      {
+        "name": "query_decomposition",
+        "duration_ms": 9677.53,
+        "metadata": {
+          "enabled": true,
+          "query_count": 4
+        }
+      },
+      {
+        "name": "hyde_generation",
+        "duration_ms": 46120.53,
+        "metadata": {
+          "enabled": true,
+          "document_chars": 1034
+        }
+      },
+      {
+        "name": "web_search.query",
+        "duration_ms": 2488.77,
+        "metadata": {
+          "query": "SG Böhl-Iggelheim Trainer 2024",
+          "result_count": 5,
+          "raw_content_chars": 42153
+        }
+      },
+      {
+        "name": "web_search.query",
+        "duration_ms": 1614.25,
+        "metadata": {
+          "query": "SG Böhl-Iggelheim erste Mannschaft aktueller Coach",
+          "result_count": 5,
+          "raw_content_chars": 22059
+        }
+      },
+      {
+        "name": "web_search.query",
+        "duration_ms": 1784.68,
+        "metadata": {
+          "query": "SG Böhl-Iggelheim Fußball Verein Trainerwechsel",
+          "result_count": 5,
+          "raw_content_chars": 45943
+        }
+      },
+      {
+        "name": "web_search.query",
+        "duration_ms": 2215.42,
+        "metadata": {
+          "query": "SG Böhl Iggelheim Sportgemeinschaft Trainer",
+          "result_count": 5,
+          "raw_content_chars": 13710
+        }
+      },
+      {
+        "name": "researcher.web_search.total",
+        "duration_ms": 8104.45,
+        "metadata": {
+          "iteration": 1,
+          "query_count": 4,
+          "source_count": 12
+        }
+      },
+      {
+        "name": "researcher.chunking",
+        "duration_ms": 4.06,
+        "metadata": {
+          "iteration": 1,
+          "source_count": 12,
+          "chunk_count": 97,
+          "source_text_chars": 96179
+        }
+      },
+      {
+        "name": "retrieval.sparse_score",
+        "duration_ms": 8.7,
+        "metadata": {
+          "chunk_count": 97,
+          "score_count": 97
+        }
+      },
+      {
+        "name": "retrieval.dense_embedding",
+        "duration_ms": 5840.93,
+        "metadata": {
+          "chunk_count": 97,
+          "model": "sentence-transformers/all-MiniLM-L6-v2",
+          "score_count": 97
+        }
+      },
+      {
+        "name": "researcher.hybrid_retrieval.total",
+        "duration_ms": 5879.95,
+        "metadata": {
+          "iteration": 1,
+          "chunk_count": 97,
+          "candidate_count": 20
+        }
+      },
+      {
+        "name": "retrieval.cross_encoder_rerank",
+        "duration_ms": 1513.1,
+        "metadata": {
+          "candidate_count": 20,
+          "top_k": 8,
+          "model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+          "selected_count": 8
+        }
+      },
+      {
+        "name": "evidence.merge",
+        "duration_ms": 0.02,
+        "metadata": {
+          "iteration": 1,
+          "evidence_groups": 1,
+          "merged_count": 8
+        }
+      },
+      {
+        "name": "evidence_filter",
+        "duration_ms": 27110.01,
+        "metadata": {
+          "iteration": 1,
+          "input_count": 8,
+          "top_k": 6,
+          "output_count": 1
+        }
+      },
+      {
+        "name": "answer_write",
+        "duration_ms": 25585.97,
+        "metadata": {
+          "iteration": 1,
+          "evidence_count": 1,
+          "answer_chars": 450
+        }
+      },
+      {
+        "name": "critic_review",
+        "duration_ms": 22050.39,
+        "metadata": {
+          "iteration": 1,
+          "evidence_count": 1,
+          "answer_chars": 450,
+          "needs_revision": false,
+          "is_grounded": true
+        }
+      },
+      {
+        "name": "iteration.total",
+        "duration_ms": 90251.14,
+        "metadata": {
+          "iteration": 1,
+          "query_count": 4,
+          "source_count": 12,
+          "selected_count": 8
+        }
+      },
+      {
+        "name": "final_merge",
+        "duration_ms": 0.07,
+        "metadata": {
+          "source_groups": 1,
+          "evidence_groups": 1,
+          "source_count": 12,
+          "evidence_count": 8
+        }
+      },
+      {
+        "name": "final_evidence_filter",
+        "duration_ms": 12458.88,
+        "metadata": {
+          "input_count": 8,
+          "top_k": 8,
+          "output_count": 1
+        }
+      },
+      {
+        "name": "pipeline.total",
+        "duration_ms": 158512.74,
+        "metadata": {
+          "question_chars": 75
+        }
+      }
+    ]
+  }
+}

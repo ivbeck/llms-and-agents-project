@@ -2,24 +2,29 @@
 
 from __future__ import annotations
 
+from typing import Annotated
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    groq_api_key: str = Field(alias="GROQ_API_KEY")
-    tavily_api_key: str = Field(alias="TAVILY_API_KEY")
-    groq_model: str = Field(default="llama-3.3-70b-versatile", alias="GROQ_MODEL")
-    groq_temperature: float = Field(default=0.1, alias="GROQ_TEMPERATURE")
+    openrouter_api_key: Annotated[str, Field(alias="OPENROUTER_API_KEY")]
+    openrouter_model: Annotated[str, Field(default="anthropic/claude-3.5-sonnet", alias="OPENROUTER_MODEL")]
+    openrouter_temperature: Annotated[float, Field(default=0.1, alias="OPENROUTER_TEMPERATURE")]
+    openrouter_base_url: Annotated[str, Field(default="https://openrouter.ai/api/v1", alias="OPENROUTER_BASE_URL")]
 
-    embedding_model: str = Field(default="sentence-transformers/all-MiniLM-L6-v2", alias="EMBEDDING_MODEL")
-    cross_encoder_model: str = Field(default="cross-encoder/ms-marco-MiniLM-L-6-v2", alias="CROSS_ENCODER_MODEL")
+    tavily_api_key: Annotated[str, Field(alias="TAVILY_API_KEY")]
+
+    embedding_model: Annotated[str, Field(default="sentence-transformers/all-MiniLM-L6-v2", alias="EMBEDDING_MODEL")]
+    cross_encoder_model: Annotated[str, Field(default="cross-encoder/ms-marco-MiniLM-L-6-v2", alias="CROSS_ENCODER_MODEL")]
 
     max_search_results: int = Field(default=5, alias="MAX_SEARCH_RESULTS")
     top_k_chunks: int = Field(default=8, alias="TOP_K_CHUNKS")
     chunk_size: int = Field(default=1200, alias="CHUNK_SIZE")
     chunk_overlap: int = Field(default=150, alias="CHUNK_OVERLAP")
     max_iterations: int = Field(default=2, alias="MAX_ITERATIONS")
+    max_evidence_retries: int = Field(default=3, alias="MAX_EVIDENCE_RETRIES")
     reflection_steps: int = Field(default=1, alias="REFLECTION_STEPS")
     candidate_pool_size: int = Field(default=20, alias="CANDIDATE_POOL_SIZE")
     rerank_top_k: int = Field(default=8, alias="RERANK_TOP_K")
@@ -31,7 +36,9 @@ class Settings(BaseSettings):
     enable_iterative_retrieval: bool = Field(default=True, alias="ENABLE_ITERATIVE_RETRIEVAL")
     enable_self_rag: bool = Field(default=True, alias="ENABLE_SELF_RAG")
     enable_evidence_filtering: bool = Field(default=True, alias="ENABLE_EVIDENCE_FILTERING")
+    enable_evidence_sufficiency: bool = Field(default=True, alias="ENABLE_EVIDENCE_SUFFICIENCY")
     enable_hyde: bool = Field(default=True, alias="ENABLE_HYDE")
+    enable_performance_analysis: bool = Field(default=False, alias="ENABLE_PERFORMANCE_ANALYSIS")
 
     model_config = SettingsConfigDict(
         env_file=".env",

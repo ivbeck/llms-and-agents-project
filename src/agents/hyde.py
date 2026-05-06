@@ -2,14 +2,19 @@
 
 from __future__ import annotations
 
-from src.llm.groq_client import GroqLLM
+import logging
+
+from src.llm.openrouter_client import OpenRouterLLM
+
+logger = logging.getLogger(__name__)
 
 
 class HyDEAgent:
-    def __init__(self, llm: GroqLLM) -> None:
+    def __init__(self, llm: OpenRouterLLM) -> None:
         self.llm = llm
 
     def generate(self, question: str) -> str:
+        logger.info("Generating HyDE document for question")
         system_prompt = (
             "You generate a short hypothetical answer document for retrieval purposes only. "
             "It should sound like a plausible source passage that could answer the question."
@@ -25,4 +30,6 @@ Rules:
 Question:
 {question}
 """
-        return self.llm.complete(system_prompt, user_prompt, temperature=0.2).strip()
+        result = self.llm.complete(system_prompt, user_prompt, temperature=0.2).strip()
+        logger.info("HyDE document generated, length=%d", len(result))
+        return result
