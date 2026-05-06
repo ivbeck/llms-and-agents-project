@@ -27,23 +27,28 @@ class ResearcherAgent:
         self.reranker = CrossEncoderReranker(settings.cross_encoder_model) if settings.enable_cross_encoder_reranking else None
         logger.info("ResearcherAgent initialized, reranker_enabled=%s", self.reranker is not None)
 
-    def gather_sources(self, queries: list[str], tracker: PerformanceTracker | None = None) -> list[SearchResult]:
-        logger.info("Gathering sources for %d queries", len(queries))
+    def gather_sources(
+        self,
+        queries: list[str],
+        search_depth: str,
+        tracker: PerformanceTracker | None = None,
+    ) -> list[SearchResult]:
+        logger.info("Gathering sources for %d queries with search_depth=%s", len(queries), search_depth)
         merged: OrderedDict[str, SearchResult] = OrderedDict()
         span = tracker.span if tracker else None
         for query in queries:
             logger.debug("Searching for: %s", query)
-            context = span("web_search.query", query=query[:120]) if span else None
+            context = span("web_search.query", query=query[:120], search_depth=search_depth) if span else None
             if context is None:
                 try:
-                    results = self.searcher.search(query)
+                    results = self.searcher.search(query, search_depth=search_depth)
                 except Exception as exc:
                     logger.warning("Search failed for query '%s': %s", query, exc)
                     continue
             else:
                 with context as meta:
                     try:
-                        results = self.searcher.search(query)
+                        results = self.searcher.search(query, search_depth=search_depth)
                     except Exception as exc:
                         logger.warning("Search failed for query '%s': %s", query, exc)
                         meta["failed"] = True
@@ -119,11 +124,12 @@ class ResearcherAgent:
         queries: list[str],
         retrieval_text: str,
         iteration: int,
+        search_depth: str,
         tracker: PerformanceTracker | None = None,
     ) -> tuple[list[SearchResult], list[ChunkEvidence], IterationLog]:
-        logger.info("Running researcher iteration %d", iteration)
-        with tracker.span("researcher.web_search.total", iteration=iteration, query_count=len(queries)) if tracker else _null_span() as meta:
-            sources = self.gather_sources(queries, tracker=tracker)
+        logger.info("Running researcher iteration %d with search_depth=%s", iteration, search_depth)
+        with tracker.span("researcher.web_search.total", iteration=iteration, query_count=len(queries), search_depth=search_depth) if tracker else _null_span() as meta:
+            sources = self.gather_sources(queries, search_depth=search_depth, tracker=tracker)
             meta["source_count"] = len(sources)
         with tracker.span("researcher.chunking", iteration=iteration, source_count=len(sources)) if tracker else _null_span() as meta:
             corpus = self.build_chunk_corpus(sources, query_label=" | ".join(queries))
@@ -150,9 +156,10 @@ class ResearcherAgent:
         log = IterationLog(
             iteration=iteration,
             queries=queries,
+            search_depth=search_depth,
             candidate_count=len(corpus),
             selected_count=len(selected),
-            summary=f"Retrieved {len(corpus)} chunks from {len(sources)} sources and kept {len(selected)} chunks for answer generation.",
+            summary=f"Retrieved {len(corpus)} chunks from {len(sources)} sources with {search_depth} search and kept {len(selected)} chunks for answer generation.",
         )
         return sources, selected, log
 

@@ -19,15 +19,26 @@ class TavilySearcher:
         self.client = TavilyClient(api_key=settings.tavily_api_key)
         logger.debug("TavilySearcher initialized")
 
-    def search(self, query: str, max_results: int | None = None) -> list[SearchResult]:
-        logger.info("Tavily search: query='%s', max_results=%s", query[:60], max_results or self.settings.max_search_results)
+    def search(
+        self,
+        query: str,
+        max_results: int | None = None,
+        search_depth: str | None = None,
+    ) -> list[SearchResult]:
+        depth = search_depth if search_depth in {"basic", "advanced"} else self.settings.tavily_default_search_depth
+        logger.info(
+            "Tavily search: query='%s', search_depth=%s, max_results=%s",
+            query[:60],
+            depth,
+            max_results or self.settings.max_search_results,
+        )
         response = None
         for attempt in range(1, 4):
             try:
                 response = self.client.search(
                     query=query,
                     topic="general",
-                    search_depth="advanced",
+                    search_depth=depth,
                     max_results=max_results or self.settings.max_search_results,
                     include_answer=False,
                     include_raw_content=True,

@@ -39,7 +39,9 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="OpenRouter model to use (default: from settings)",
     )
+    parser.add_argument("--tavily-default-search-depth", choices=["basic", "advanced"], default=None)
     parser.add_argument("--max-search-results", type=int, default=None)
+    parser.add_argument("--max-query-decomposition-queries", type=int, default=None)
     parser.add_argument("--top-k-chunks", type=int, default=None)
     parser.add_argument("--max-iterations", type=int, default=None)
     parser.add_argument("--max-evidence-retries", type=int, default=None)
@@ -77,9 +79,13 @@ def apply_cli_overrides(settings: Settings, args: argparse.Namespace) -> Setting
 
     if args.openrouter_model is not None:
         settings.openrouter_model = args.openrouter_model
+    if args.tavily_default_search_depth is not None:
+        settings.tavily_default_search_depth = args.tavily_default_search_depth
 
     if args.max_search_results is not None:
         settings.max_search_results = args.max_search_results
+    if args.max_query_decomposition_queries is not None:
+        settings.max_query_decomposition_queries = args.max_query_decomposition_queries
     if args.top_k_chunks is not None:
         settings.top_k_chunks = args.top_k_chunks
     if args.max_iterations is not None:
