@@ -14,7 +14,7 @@ from src.agents.query_planner import QueryPlannerAgent
 from src.agents.researcher import ResearcherAgent
 from src.config import Settings
 from src.llm.openrouter_client import OpenRouterLLM
-from src.models import ChunkEvidence, CriticResult, FeatureFlags, FinalAnswer, SearchResult
+from src.models import ChunkEvidence, CriticResult, FeatureFlags, FinalAnswer, QueryPlanResult, SearchResult
 from src.performance import PerformanceTracker, log_performance_report
 from src.retrieval.web_search import TavilySearcher
 
@@ -105,10 +105,20 @@ class AdvancedMultiAgentRAGSystem:
         values.sort(key=lambda x: x.score_final, reverse=True)
         return values
 
-    def _advanced_queries(self, question: str) -> list[str]:
+    def _advanced_query_plan(self, question: str) -> QueryPlanResult:
         if self.settings.enable_query_decomposition:
-            return self.query_planner.decompose(question)
-        return [question]
+            return self.query_planner.plan(
+                question,
+                max_queries=self.settings.max_query_decomposition_queries,
+                default_search_depth=self.settings.tavily_default_search_depth,
+            )
+        return QueryPlanResult(
+            queries=[question],
+            search_depth=self.settings.tavily_default_search_depth,
+        )
+
+    def _advanced_queries(self, question: str) -> list[str]:
+        return self._advanced_query_plan(question).queries
 
     def answer_question(self, question: str) -> FinalAnswer:
         tracker = PerformanceTracker(self.settings.enable_performance_analysis)
@@ -126,9 +136,12 @@ class AdvancedMultiAgentRAGSystem:
         logger.info("=== Starting pipeline for question: %s", question[:80])
         features = self._feature_flags()
         with tracker.span("query_decomposition", enabled=self.settings.enable_query_decomposition) as meta:
-            queries = self._advanced_queries(question)
+            initial_plan = self._advanced_query_plan(question)
+            queries = initial_plan.queries
+            current_search_depth = initial_plan.search_depth
             meta["query_count"] = len(queries)
-        logger.info("Query decomposition: %d queries generated", len(queries))
+            meta["search_depth"] = current_search_depth
+        logger.info("Query decomposition: %d queries generated, search_depth=%s", len(queries), current_search_depth)
         for i, q in enumerate(queries):
             logger.debug("  Query[%d]: %s", i, q)
 
@@ -159,13 +172,14 @@ class AdvancedMultiAgentRAGSystem:
         logger.info("Running %d iteration(s)", iterations)
 
         for iteration in range(1, iterations + 1):
-            with tracker.span("iteration.total", iteration=iteration, query_count=len(current_queries)) as iteration_meta:
+            with tracker.span("iteration.total", iteration=iteration, query_count=len(current_queries), search_depth=current_search_depth) as iteration_meta:
                 logger.info("--- Iteration %d ---", iteration)
                 sources, selected, log = self.researcher.run_iteration(
                     question=question,
                     queries=current_queries,
                     retrieval_text=retrieval_text,
                     iteration=iteration,
+                    search_depth=current_search_depth,
                     tracker=tracker,
                 )
                 all_sources.append(sources)
@@ -213,6 +227,7 @@ class AdvancedMultiAgentRAGSystem:
                         queries=sufficiency.follow_up_queries,
                         retrieval_text=retrieval_text,
                         iteration=iteration,
+                        search_depth="advanced",
                         tracker=tracker,
                     )
                     all_sources.append(retry_sources)
@@ -251,17 +266,21 @@ class AdvancedMultiAgentRAGSystem:
                 break
 
             with tracker.span("follow_up_query_generation", iteration=iteration) as meta:
-                follow_up = self.query_planner.next_iteration_queries(
+                follow_up_plan = self.query_planner.next_iteration_plan(
                     question=question,
                     current_answer=current_answer,
                     critique=current_critic.comment,
+                    default_search_depth=self.settings.tavily_default_search_depth,
                 )
+                follow_up = follow_up_plan.queries
                 meta["query_count"] = len(follow_up)
+                meta["search_depth"] = follow_up_plan.search_depth
             if not follow_up:
                 logger.info("No follow-up queries generated")
                 break
             current_queries = follow_up
-            logger.info("Follow-up queries: %s", follow_up)
+            current_search_depth = follow_up_plan.search_depth
+            logger.info("Follow-up queries: %s, search_depth=%s", follow_up, current_search_depth)
 
         logger.info("Merging sources and evidence across all iterations")
         with tracker.span("final_merge", source_groups=len(all_sources), evidence_groups=len(all_evidence)) as meta:

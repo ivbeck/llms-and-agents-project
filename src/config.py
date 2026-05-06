@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -15,11 +15,13 @@ class Settings(BaseSettings):
     openrouter_base_url: Annotated[str, Field(default="https://openrouter.ai/api/v1", alias="OPENROUTER_BASE_URL")]
 
     tavily_api_key: Annotated[str, Field(alias="TAVILY_API_KEY")]
+    tavily_default_search_depth: Annotated[Literal["basic", "advanced"], Field(default="advanced", alias="TAVILY_DEFAULT_SEARCH_DEPTH")]
 
     embedding_model: Annotated[str, Field(default="sentence-transformers/all-MiniLM-L6-v2", alias="EMBEDDING_MODEL")]
     cross_encoder_model: Annotated[str, Field(default="cross-encoder/ms-marco-MiniLM-L-6-v2", alias="CROSS_ENCODER_MODEL")]
 
     max_search_results: int = Field(default=5, alias="MAX_SEARCH_RESULTS")
+    max_query_decomposition_queries: int = Field(default=4, alias="MAX_QUERY_DECOMPOSITION_QUERIES")
     top_k_chunks: int = Field(default=8, alias="TOP_K_CHUNKS")
     chunk_size: int = Field(default=1200, alias="CHUNK_SIZE")
     chunk_overlap: int = Field(default=150, alias="CHUNK_OVERLAP")

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -41,6 +41,7 @@ class ChunkEvidence(BaseModel):
 
 class QueryPlanResult(BaseModel):
     queries: list[str] = Field(default_factory=list)
+    search_depth: Literal["basic", "advanced"] = "advanced"
 
 
 class EvidenceKeepItem(BaseModel):
@@ -70,6 +71,7 @@ class CriticResult(BaseModel):
 class IterationLog(BaseModel):
     iteration: int
     queries: list[str]
+    search_depth: str = ""
     candidate_count: int
     selected_count: int
     summary: str

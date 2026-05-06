@@ -177,6 +177,7 @@ Full setup:
 ```text
 Question
 -> Query Decomposition
+-> adaptive Tavily search depth (`basic` or `advanced`)
 -> HyDE pseudo-document generation
 -> Tavily searches across iterations
 -> chunking
@@ -205,6 +206,10 @@ Question
 `--baseline` turns all add-ons off.
 
 Evidence sufficiency can trigger extra pre-answer web-search retries when the filtered evidence is not enough to answer the question. Limit this loop with `MAX_EVIDENCE_RETRIES` or `--max-evidence-retries` (default: 3).
+
+Query decomposition generates up to `MAX_QUERY_DECOMPOSITION_QUERIES` focused search queries (default: 4). The planner can return fewer queries for simple questions.
+
+The query planner also chooses Tavily `search_depth` (`basic` or `advanced`) for the initial search and critic-driven follow-up searches. Evidence sufficiency retries always use `advanced` search. If planning is disabled or parsing fails, the system falls back to `TAVILY_DEFAULT_SEARCH_DEPTH` (default: `advanced`).
 
 ## Suggested Report Metrics
 
