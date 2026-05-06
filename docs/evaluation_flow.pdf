@@ -1,0 +1,954 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+3 0 obj
+<< /Length 4934 >>
+stream
+BT
+/F2 14 Tf
+54 785 Td
+(Evaluation Flow for the Web-Search RAG QA System) Tj
+-54 -785 Td
+/F1 5 Tf
+54 765 Td
+() Tj
+-54 -765 Td
+/F1 10 Tf
+54 758 Td
+(This document defines the evaluation plan for our Question Answering Agents project. The) Tj
+-54 -758 Td
+/F1 10 Tf
+54 744 Td
+(system is a web-search-based RAG / multi-agent QA pipeline using Tavily for live web) Tj
+-54 -744 Td
+/F1 10 Tf
+54 730 Td
+(retrieval and optional agentic components such as query decomposition, HyDE, hybrid) Tj
+-54 -730 Td
+/F1 10 Tf
+54 716 Td
+(retrieval, reranking, evidence filtering, answer writing, and a Self-RAG critic loop.) Tj
+-54 -716 Td
+/F1 5 Tf
+54 702 Td
+() Tj
+-54 -702 Td
+/F1 10 Tf
+54 695 Td
+(Important privacy note: benchmark examples that contain canary strings or dataset-internal) Tj
+-54 -695 Td
+/F1 10 Tf
+54 681 Td
+(content should not be copied into reports, public repositories, screenshots, or training) Tj
+-54 -681 Td
+/F1 10 Tf
+54 667 Td
+(data. Only aggregate metrics and non-sensitive descriptions should be published.) Tj
+-54 -667 Td
+/F1 5 Tf
+54 653 Td
+() Tj
+-54 -653 Td
+/F1 4 Tf
+54 646 Td
+() Tj
+-54 -646 Td
+/F2 12 Tf
+54 641 Td
+(1. Evaluation Goal) Tj
+-54 -641 Td
+/F1 5 Tf
+54 624 Td
+() Tj
+-54 -624 Td
+/F1 10 Tf
+54 617 Td
+(The evaluation measures whether the system answers factual questions correctly, whether) Tj
+-54 -617 Td
+/F1 10 Tf
+54 603 Td
+(retrieval improves over an LLM-only baseline, which pipeline components add value, whether) Tj
+-54 -603 Td
+/F1 10 Tf
+54 589 Td
+(selected evidence supports the answer, and whether the system avoids hallucinations by) Tj
+-54 -589 Td
+/F1 10 Tf
+54 575 Td
+(abstaining when evidence is insufficient.) Tj
+-54 -575 Td
+/F1 5 Tf
+54 561 Td
+() Tj
+-54 -561 Td
+/F1 10 Tf
+54 554 Td
+(We explicitly distinguish two retrieval settings: live-web evaluation with Tavily, and) Tj
+-54 -554 Td
+/F1 10 Tf
+54 540 Td
+(controlled RAG evaluation with CRAG mock APIs.) Tj
+-54 -540 Td
+/F1 5 Tf
+54 526 Td
+() Tj
+-54 -526 Td
+/F1 4 Tf
+54 519 Td
+() Tj
+-54 -519 Td
+/F2 12 Tf
+54 514 Td
+(2. Benchmarks) Tj
+-54 -514 Td
+/F1 5 Tf
+54 497 Td
+() Tj
+-54 -497 Td
+/F1 10 Tf
+54 490 Td
+(SimpleQA is used as a live-web diagnostic benchmark. It contains short factual questions) Tj
+-54 -490 Td
+/F1 10 Tf
+54 476 Td
+(with unambiguous answers and is well suited for debugging the Tavily-based pipeline. We) Tj
+-54 -476 Td
+/F1 10 Tf
+54 462 Td
+(sample about 150-200 questions and evaluate them with Tavily.) Tj
+-54 -462 Td
+/F1 5 Tf
+54 448 Td
+() Tj
+-54 -448 Td
+/F1 10 Tf
+54 441 Td
+(CRAG is used as a controlled RAG benchmark, not as a Tavily benchmark. CRAG provides) Tj
+-54 -441 Td
+/F1 10 Tf
+54 427 Td
+(question-answer pairs plus mock web and knowledge graph APIs. For CRAG, Tavily should be) Tj
+-54 -427 Td
+/F1 10 Tf
+54 413 Td
+(replaced by a CragSearcher adapter so that the downstream RAG pipeline is evaluated in a) Tj
+-54 -413 Td
+/F1 10 Tf
+54 399 Td
+(controlled retrieval setting. We sample about 50-100 temporally stable questions.) Tj
+-54 -399 Td
+/F1 5 Tf
+54 385 Td
+() Tj
+-54 -385 Td
+/F1 10 Tf
+54 378 Td
+(BrowseComp is used only as a stretch test for hard agentic web search. It is much harder) Tj
+-54 -378 Td
+/F1 10 Tf
+54 364 Td
+(than SimpleQA or CRAG and should be evaluated with Tavily on a small subset of about 20-30) Tj
+-54 -364 Td
+/F1 10 Tf
+54 350 Td
+(questions.) Tj
+-54 -350 Td
+/F1 5 Tf
+54 336 Td
+() Tj
+-54 -336 Td
+/F1 4 Tf
+54 329 Td
+() Tj
+-54 -329 Td
+/F2 12 Tf
+54 324 Td
+(3. Retrieval Provider Abstraction) Tj
+-54 -324 Td
+/F1 5 Tf
+54 307 Td
+() Tj
+-54 -307 Td
+/F1 10 Tf
+54 300 Td
+(The pipeline should use a common SearchProvider interface: search\(query\) ->) Tj
+-54 -300 Td
+/F1 10 Tf
+54 286 Td
+(list[SearchResult].) Tj
+-54 -286 Td
+/F1 5 Tf
+54 272 Td
+() Tj
+-54 -272 Td
+/F1 10 Tf
+54 265 Td
+(TavilySearcher implements live web search for SimpleQA and BrowseComp.) Tj
+-54 -265 Td
+/F1 5 Tf
+54 251 Td
+() Tj
+-54 -251 Td
+/F1 10 Tf
+54 244 Td
+(CragSearcher implements access to CRAG mock web / knowledge graph APIs for controlled CRAG) Tj
+-54 -244 Td
+/F1 10 Tf
+54 230 Td
+(evaluation.) Tj
+-54 -230 Td
+/F1 5 Tf
+54 216 Td
+() Tj
+-54 -216 Td
+/F1 10 Tf
+54 209 Td
+(Only the retrieval provider changes between benchmarks; the downstream RAG pipeline remains) Tj
+-54 -209 Td
+/F1 10 Tf
+54 195 Td
+(the same.) Tj
+-54 -195 Td
+/F1 5 Tf
+54 181 Td
+() Tj
+-54 -181 Td
+/F1 4 Tf
+54 174 Td
+() Tj
+-54 -174 Td
+/F2 12 Tf
+54 169 Td
+(4. System Setups) Tj
+-54 -169 Td
+/F1 5 Tf
+54 152 Td
+() Tj
+-54 -152 Td
+/F1 10 Tf
+54 145 Td
+(S0 LLM-only: no retrieval, only a direct model answer.) Tj
+-54 -145 Td
+/F1 5 Tf
+54 131 Td
+() Tj
+-54 -131 Td
+/F1 10 Tf
+54 124 Td
+(S1 Basic RAG: search provider, chunking, simple lexical scoring, answer writer, critic.) Tj
+-54 -124 Td
+/F1 5 Tf
+54 110 Td
+() Tj
+-54 -110 Td
+/F1 10 Tf
+54 103 Td
+(S2 Query Decomposition: S1 plus query planning and multiple focused search queries.) Tj
+-54 -103 Td
+/F1 5 Tf
+54 89 Td
+() Tj
+-54 -89 Td
+/F1 10 Tf
+54 82 Td
+(S3 Hybrid Retrieval + Reranking: S2 plus BM25, dense embeddings, and cross-encoder) Tj
+-54 -82 Td
+ET
+endstream
+endobj
+4 0 obj
+<< /Length 4603 >>
+stream
+BT
+/F1 10 Tf
+54 785 Td
+(reranking.) Tj
+-54 -785 Td
+/F1 5 Tf
+54 771 Td
+() Tj
+-54 -771 Td
+/F1 10 Tf
+54 764 Td
+(S4 Evidence Filtering: S3 plus LLM-based evidence selection with reasons.) Tj
+-54 -764 Td
+/F1 5 Tf
+54 750 Td
+() Tj
+-54 -750 Td
+/F1 10 Tf
+54 743 Td
+(S5 Full System: query decomposition, HyDE, hybrid retrieval, reranking, evidence filtering,) Tj
+-54 -743 Td
+/F1 10 Tf
+54 729 Td
+(answer writer, and Self-RAG critic loop.) Tj
+-54 -729 Td
+/F1 5 Tf
+54 715 Td
+() Tj
+-54 -715 Td
+/F1 10 Tf
+54 708 Td
+(For BrowseComp, only S1 and S5 should be evaluated to keep cost and runtime manageable.) Tj
+-54 -708 Td
+/F1 5 Tf
+54 694 Td
+() Tj
+-54 -694 Td
+/F1 4 Tf
+54 687 Td
+() Tj
+-54 -687 Td
+/F2 12 Tf
+54 682 Td
+(5. Primary Metric) Tj
+-54 -682 Td
+/F1 5 Tf
+54 665 Td
+() Tj
+-54 -665 Td
+/F1 10 Tf
+54 658 Td
+(The primary metric is Truthfulness Score, adapted from CRAG's evaluation scheme.) Tj
+-54 -658 Td
+/F1 5 Tf
+54 644 Td
+() Tj
+-54 -644 Td
+/F1 10 Tf
+54 637 Td
+(Perfect / correct / acceptable answer: +1.) Tj
+-54 -637 Td
+/F1 5 Tf
+54 623 Td
+() Tj
+-54 -623 Td
+/F1 10 Tf
+54 616 Td
+(Missing / not attempted answer: 0.) Tj
+-54 -616 Td
+/F1 5 Tf
+54 602 Td
+() Tj
+-54 -602 Td
+/F1 10 Tf
+54 595 Td
+(Incorrect / hallucinated answer: -1.) Tj
+-54 -595 Td
+/F1 5 Tf
+54 581 Td
+() Tj
+-54 -581 Td
+/F1 10 Tf
+54 574 Td
+(Truthfulness is the average score over all questions. This metric rewards correct answers,) Tj
+-54 -574 Td
+/F1 10 Tf
+54 560 Td
+(penalizes hallucinations, and treats abstention as better than unsupported guessing.) Tj
+-54 -560 Td
+/F1 5 Tf
+54 546 Td
+() Tj
+-54 -546 Td
+/F1 4 Tf
+54 539 Td
+() Tj
+-54 -539 Td
+/F2 12 Tf
+54 534 Td
+(6. Secondary Metrics) Tj
+-54 -534 Td
+/F1 5 Tf
+54 517 Td
+() Tj
+-54 -517 Td
+/F1 10 Tf
+54 510 Td
+(Accuracy: share of correct or acceptable answers.) Tj
+-54 -510 Td
+/F1 5 Tf
+54 496 Td
+() Tj
+-54 -496 Td
+/F1 10 Tf
+54 489 Td
+(Missing Rate: share of missing or not attempted answers.) Tj
+-54 -489 Td
+/F1 5 Tf
+54 475 Td
+() Tj
+-54 -475 Td
+/F1 10 Tf
+54 468 Td
+(Hallucination Rate: share of incorrect answers.) Tj
+-54 -468 Td
+/F1 5 Tf
+54 454 Td
+() Tj
+-54 -454 Td
+/F1 10 Tf
+54 447 Td
+(Average Latency: mean runtime per question.) Tj
+-54 -447 Td
+/F1 5 Tf
+54 433 Td
+() Tj
+-54 -433 Td
+/F1 10 Tf
+54 426 Td
+(Average Search Calls: number of Tavily or CRAG API calls.) Tj
+-54 -426 Td
+/F1 5 Tf
+54 412 Td
+() Tj
+-54 -412 Td
+/F1 10 Tf
+54 405 Td
+(Average Sources and Evidence Chunks: how much context the system used.) Tj
+-54 -405 Td
+/F1 5 Tf
+54 391 Td
+() Tj
+-54 -391 Td
+/F1 10 Tf
+54 384 Td
+(Evidence Relevance: 2 means directly supports the answer, 1 means partially useful, 0 means) Tj
+-54 -384 Td
+/F1 10 Tf
+54 370 Td
+(irrelevant.) Tj
+-54 -370 Td
+/F1 5 Tf
+54 356 Td
+() Tj
+-54 -356 Td
+/F1 10 Tf
+54 349 Td
+(Citation Support Rate: share of answers where cited evidence actually supports the central) Tj
+-54 -349 Td
+/F1 10 Tf
+54 335 Td
+(answer.) Tj
+-54 -335 Td
+/F1 5 Tf
+54 321 Td
+() Tj
+-54 -321 Td
+/F1 4 Tf
+54 314 Td
+() Tj
+-54 -314 Td
+/F2 12 Tf
+54 309 Td
+(7. Automatic Evaluation) Tj
+-54 -309 Td
+/F1 5 Tf
+54 292 Td
+() Tj
+-54 -292 Td
+/F1 10 Tf
+54 285 Td
+(Each generated answer is first checked by normalized exact match against the gold answer. If) Tj
+-54 -285 Td
+/F1 10 Tf
+54 271 Td
+(exact match does not decide the case, an LLM judge labels the answer.) Tj
+-54 -271 Td
+/F1 5 Tf
+54 257 Td
+() Tj
+-54 -257 Td
+/F1 10 Tf
+54 250 Td
+(The judge receives the question, gold answer, system answer, and selected evidence. It) Tj
+-54 -250 Td
+/F1 10 Tf
+54 236 Td
+(returns JSON with label, truthfulness_score, evidence_relevance, and a short reason.) Tj
+-54 -236 Td
+/F1 5 Tf
+54 222 Td
+() Tj
+-54 -222 Td
+/F1 10 Tf
+54 215 Td
+(The judge model should ideally differ from the answer writer model. If this is not possible,) Tj
+-54 -215 Td
+/F1 10 Tf
+54 201 Td
+(it must be reported as a limitation.) Tj
+-54 -201 Td
+/F1 5 Tf
+54 187 Td
+() Tj
+-54 -187 Td
+/F1 4 Tf
+54 180 Td
+() Tj
+-54 -180 Td
+/F2 12 Tf
+54 175 Td
+(8. Human Evaluation) Tj
+-54 -175 Td
+/F1 5 Tf
+54 158 Td
+() Tj
+-54 -158 Td
+/F1 10 Tf
+54 151 Td
+(A small human evaluation validates whether automatic metrics are meaningful. Annotate about) Tj
+-54 -151 Td
+/F1 10 Tf
+54 137 Td
+(40 examples, for example 20 from SimpleQA, 15 from CRAG, and 5 from BrowseComp.) Tj
+-54 -137 Td
+/F1 5 Tf
+54 123 Td
+() Tj
+-54 -123 Td
+/F1 10 Tf
+54 116 Td
+(Human labels: answer correctness, groundedness, and evidence relevance.) Tj
+-54 -116 Td
+/F1 5 Tf
+54 102 Td
+() Tj
+-54 -102 Td
+/F1 10 Tf
+54 95 Td
+(Report agreement between human labels and automatic judge labels. If possible, report) Tj
+-54 -95 Td
+/F1 10 Tf
+54 81 Td
+(Spearman correlation or Cohen's kappa when two annotators are available.) Tj
+-54 -81 Td
+ET
+endstream
+endobj
+5 0 obj
+<< /Length 4510 >>
+stream
+BT
+/F1 5 Tf
+54 785 Td
+() Tj
+-54 -785 Td
+/F1 4 Tf
+54 778 Td
+() Tj
+-54 -778 Td
+/F2 12 Tf
+54 773 Td
+(9. Ablation Study) Tj
+-54 -773 Td
+/F1 5 Tf
+54 756 Td
+() Tj
+-54 -756 Td
+/F1 10 Tf
+54 749 Td
+(S0 to S1 measures the value of retrieval.) Tj
+-54 -749 Td
+/F1 5 Tf
+54 735 Td
+() Tj
+-54 -735 Td
+/F1 10 Tf
+54 728 Td
+(S1 to S2 measures the value of query decomposition.) Tj
+-54 -728 Td
+/F1 5 Tf
+54 714 Td
+() Tj
+-54 -714 Td
+/F1 10 Tf
+54 707 Td
+(S2 to S3 measures the value of hybrid retrieval and reranking.) Tj
+-54 -707 Td
+/F1 5 Tf
+54 693 Td
+() Tj
+-54 -693 Td
+/F1 10 Tf
+54 686 Td
+(S3 to S4 measures the value of the evidence filtering agent.) Tj
+-54 -686 Td
+/F1 5 Tf
+54 672 Td
+() Tj
+-54 -672 Td
+/F1 10 Tf
+54 665 Td
+(S4 to S5 measures the value of HyDE and the Self-RAG critic loop.) Tj
+-54 -665 Td
+/F1 5 Tf
+54 651 Td
+() Tj
+-54 -651 Td
+/F1 10 Tf
+54 644 Td
+(For the critic loop, log whether a revision happened, whether the revision improved the) Tj
+-54 -644 Td
+/F1 10 Tf
+54 630 Td
+(score, and how much latency it added.) Tj
+-54 -630 Td
+/F1 5 Tf
+54 616 Td
+() Tj
+-54 -616 Td
+/F1 4 Tf
+54 609 Td
+() Tj
+-54 -609 Td
+/F2 12 Tf
+54 604 Td
+(10. Per-Benchmark Flow) Tj
+-54 -604 Td
+/F1 5 Tf
+54 587 Td
+() Tj
+-54 -587 Td
+/F1 10 Tf
+54 580 Td
+(SimpleQA: SimpleQA question -> TavilySearcher -> RAG pipeline -> answer -> gold answer) Tj
+-54 -580 Td
+/F1 10 Tf
+54 566 Td
+(comparison -> judge -> JSONL result.) Tj
+-54 -566 Td
+/F1 5 Tf
+54 552 Td
+() Tj
+-54 -552 Td
+/F1 10 Tf
+54 545 Td
+(CRAG: CRAG question -> CragSearcher using CRAG mock APIs -> same RAG pipeline -> CRAG-style) Tj
+-54 -545 Td
+/F1 10 Tf
+54 531 Td
+(auto evaluation -> JSONL result. No Tavily calls should be used in CRAG evaluation.) Tj
+-54 -531 Td
+/F1 5 Tf
+54 517 Td
+() Tj
+-54 -517 Td
+/F1 10 Tf
+54 510 Td
+(BrowseComp: BrowseComp question -> TavilySearcher -> RAG pipeline -> answer -> gold answer /) Tj
+-54 -510 Td
+/F1 10 Tf
+54 496 Td
+(judge evaluation -> JSONL result.) Tj
+-54 -496 Td
+/F1 5 Tf
+54 482 Td
+() Tj
+-54 -482 Td
+/F1 4 Tf
+54 475 Td
+() Tj
+-54 -475 Td
+/F2 12 Tf
+54 470 Td
+(11. JSONL Output Schema) Tj
+-54 -470 Td
+/F1 5 Tf
+54 453 Td
+() Tj
+-54 -453 Td
+/F1 10 Tf
+54 446 Td
+(Each run should store: benchmark, retrieval_provider, question_id, setup, question,) Tj
+-54 -446 Td
+/F1 10 Tf
+54 432 Td
+(gold_answer, prediction, judge_label, truthfulness_score, evidence_relevance,) Tj
+-54 -432 Td
+/F1 10 Tf
+54 418 Td
+(latency_seconds, search_calls, sources_count, evidence_count, critic_needs_revision,) Tj
+-54 -418 Td
+/F1 10 Tf
+54 404 Td
+(critic_comment, and selected_evidence metadata.) Tj
+-54 -404 Td
+/F1 5 Tf
+54 390 Td
+() Tj
+-54 -390 Td
+/F1 4 Tf
+54 383 Td
+() Tj
+-54 -383 Td
+/F2 12 Tf
+54 378 Td
+(12. Result Tables) Tj
+-54 -378 Td
+/F1 5 Tf
+54 361 Td
+() Tj
+-54 -361 Td
+/F1 10 Tf
+54 354 Td
+(Dataset Usage: benchmark, full size, used sample, retrieval provider, purpose.) Tj
+-54 -354 Td
+/F1 5 Tf
+54 340 Td
+() Tj
+-54 -340 Td
+/F1 10 Tf
+54 333 Td
+(SimpleQA Results: setup, truthfulness, accuracy, missing, hallucination, latency, search) Tj
+-54 -333 Td
+/F1 10 Tf
+54 319 Td
+(calls.) Tj
+-54 -319 Td
+/F1 5 Tf
+54 305 Td
+() Tj
+-54 -305 Td
+/F1 10 Tf
+54 298 Td
+(CRAG Results: setup, truthfulness, accuracy, missing, hallucination, evidence relevance,) Tj
+-54 -298 Td
+/F1 10 Tf
+54 284 Td
+(latency.) Tj
+-54 -284 Td
+/F1 5 Tf
+54 270 Td
+() Tj
+-54 -270 Td
+/F1 10 Tf
+54 263 Td
+(BrowseComp Stress Test: setup, truthfulness, accuracy, missing, hallucination, latency.) Tj
+-54 -263 Td
+/F1 5 Tf
+54 249 Td
+() Tj
+-54 -249 Td
+/F1 10 Tf
+54 242 Td
+(Evidence Quality: benchmark, setup, evidence relevance, citation support, average evidence) Tj
+-54 -242 Td
+/F1 10 Tf
+54 228 Td
+(chunks.) Tj
+-54 -228 Td
+/F1 5 Tf
+54 214 Td
+() Tj
+-54 -214 Td
+/F1 10 Tf
+54 207 Td
+(Human vs Automatic Evaluation: correctness agreement, groundedness agreement, evidence) Tj
+-54 -207 Td
+/F1 10 Tf
+54 193 Td
+(relevance agreement or correlation.) Tj
+-54 -193 Td
+/F1 5 Tf
+54 179 Td
+() Tj
+-54 -179 Td
+/F1 4 Tf
+54 172 Td
+() Tj
+-54 -172 Td
+/F2 12 Tf
+54 167 Td
+(13. Suggested Minimal Version) Tj
+-54 -167 Td
+/F1 5 Tf
+54 150 Td
+() Tj
+-54 -150 Td
+/F1 10 Tf
+54 143 Td
+(If time or budget is limited, run SimpleQA with 100 questions and setups S1, S3, S5; CRAG) Tj
+-54 -143 Td
+/F1 10 Tf
+54 129 Td
+(with 30 stable questions and setups S1, S5 using CRAG mock APIs; and BrowseComp with 10) Tj
+-54 -129 Td
+/F1 10 Tf
+54 115 Td
+(questions and setups S1, S5. This gives about 380 runs and is realistic for a university) Tj
+-54 -115 Td
+/F1 10 Tf
+54 101 Td
+(project.) Tj
+-54 -101 Td
+/F1 5 Tf
+54 87 Td
+() Tj
+-54 -87 Td
+/F1 4 Tf
+54 80 Td
+() Tj
+-54 -80 Td
+ET
+endstream
+endobj
+6 0 obj
+<< /Length 2099 >>
+stream
+BT
+/F2 12 Tf
+54 785 Td
+(14. Report Wording) Tj
+-54 -785 Td
+/F1 5 Tf
+54 768 Td
+() Tj
+-54 -768 Td
+/F1 10 Tf
+54 761 Td
+(We evaluate our system in three complementary settings. First, SimpleQA is used as a) Tj
+-54 -761 Td
+/F1 10 Tf
+54 747 Td
+(diagnostic benchmark for live-web factual question answering with Tavily. Second, a) Tj
+-54 -747 Td
+/F1 10 Tf
+54 733 Td
+(temporally stable CRAG subset is used as a controlled RAG benchmark. Since CRAG provides) Tj
+-54 -733 Td
+/F1 10 Tf
+54 719 Td
+(mock web and knowledge graph APIs, Tavily is replaced with a CRAG retrieval adapter for) Tj
+-54 -719 Td
+/F1 10 Tf
+54 705 Td
+(these runs. Third, a small BrowseComp subset is used as a stress test for hard agentic web) Tj
+-54 -705 Td
+/F1 10 Tf
+54 691 Td
+(search.) Tj
+-54 -691 Td
+/F1 5 Tf
+54 677 Td
+() Tj
+-54 -677 Td
+/F1 10 Tf
+54 670 Td
+(Our primary metric is Truthfulness Score, adapted from CRAG: correct or acceptable answers) Tj
+-54 -670 Td
+/F1 10 Tf
+54 656 Td
+(receive +1, missing answers receive 0, and incorrect or hallucinated answers receive -1. We) Tj
+-54 -656 Td
+/F1 10 Tf
+54 642 Td
+(additionally report accuracy, missing rate, hallucination rate, latency, search calls, and) Tj
+-54 -642 Td
+/F1 10 Tf
+54 628 Td
+(evidence relevance. A small human evaluation validates the automatic judge.) Tj
+-54 -628 Td
+/F1 5 Tf
+54 614 Td
+() Tj
+-54 -614 Td
+/F1 4 Tf
+54 607 Td
+() Tj
+-54 -607 Td
+/F2 12 Tf
+54 602 Td
+(Sources) Tj
+-54 -602 Td
+/F1 5 Tf
+54 585 Td
+() Tj
+-54 -585 Td
+/F1 10 Tf
+54 578 Td
+(OpenAI SimpleQA: https://openai.com/index/introducing-simpleqa/) Tj
+-54 -578 Td
+/F1 5 Tf
+54 564 Td
+() Tj
+-54 -564 Td
+/F1 10 Tf
+54 557 Td
+(OpenAI BrowseComp: https://openai.com/index/browsecomp/) Tj
+-54 -557 Td
+/F1 5 Tf
+54 543 Td
+() Tj
+-54 -543 Td
+/F1 10 Tf
+54 536 Td
+(CRAG paper: https://arxiv.org/abs/2406.04744) Tj
+-54 -536 Td
+/F1 5 Tf
+54 522 Td
+() Tj
+-54 -522 Td
+/F1 10 Tf
+54 515 Td
+(CRAG / AIcrowd challenge: https://www.aicrowd.com/challenges/meta-comprehensive-rag-) Tj
+-54 -515 Td
+/F1 10 Tf
+54 501 Td
+(benchmark-kdd-cup-2024) Tj
+-54 -501 Td
+/F1 5 Tf
+54 487 Td
+() Tj
+-54 -487 Td
+/F1 4 Tf
+54 480 Td
+() Tj
+-54 -480 Td
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 11 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 3 0 R >>
+endobj
+8 0 obj
+<< /Type /Page /Parent 11 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 4 0 R >>
+endobj
+9 0 obj
+<< /Type /Page /Parent 11 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 5 0 R >>
+endobj
+10 0 obj
+<< /Type /Page /Parent 11 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 6 0 R >>
+endobj
+11 0 obj
+<< /Type /Pages /Kids [7 0 R 8 0 R 9 0 R 10 0 R] /Count 4 >>
+endobj
+12 0 obj
+<< /Type /Catalog /Pages 11 0 R >>
+endobj
+xref
+0 13
+0000000000 65535 f 
+0000000015 00000 n 
+0000000112 00000 n 
+0000000214 00000 n 
+0000005200 00000 n 
+0000009855 00000 n 
+0000014417 00000 n 
+0000016568 00000 n 
+0000016705 00000 n 
+0000016842 00000 n 
+0000016979 00000 n 
+0000017117 00000 n 
+0000017194 00000 n 
+trailer
+<< /Size 13 /Root 12 0 R >>
+startxref
+17245
+%%EOF

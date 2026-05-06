@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     chunk_size: int = Field(default=1200, alias="CHUNK_SIZE")
     chunk_overlap: int = Field(default=150, alias="CHUNK_OVERLAP")
     max_iterations: int = Field(default=2, alias="MAX_ITERATIONS")
+    max_evidence_retries: int = Field(default=3, alias="MAX_EVIDENCE_RETRIES")
     reflection_steps: int = Field(default=1, alias="REFLECTION_STEPS")
     candidate_pool_size: int = Field(default=20, alias="CANDIDATE_POOL_SIZE")
     rerank_top_k: int = Field(default=8, alias="RERANK_TOP_K")
@@ -35,7 +36,9 @@ class Settings(BaseSettings):
     enable_iterative_retrieval: bool = Field(default=True, alias="ENABLE_ITERATIVE_RETRIEVAL")
     enable_self_rag: bool = Field(default=True, alias="ENABLE_SELF_RAG")
     enable_evidence_filtering: bool = Field(default=True, alias="ENABLE_EVIDENCE_FILTERING")
+    enable_evidence_sufficiency: bool = Field(default=True, alias="ENABLE_EVIDENCE_SUFFICIENCY")
     enable_hyde: bool = Field(default=True, alias="ENABLE_HYDE")
+    enable_performance_analysis: bool = Field(default=False, alias="ENABLE_PERFORMANCE_ANALYSIS")
 
     model_config = SettingsConfigDict(
         env_file=".env",

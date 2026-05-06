@@ -19,6 +19,7 @@ STEP_NAMES = [
     "Retrieval",
     "Reranking",
     "Evidence Filter",
+    "Evidence Sufficiency",
     "Answer Write",
     "Critic Loop",
 ]

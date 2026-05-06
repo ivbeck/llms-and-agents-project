@@ -26,7 +26,8 @@ All optional add-ons are enabled by default:
 4. Iterative retrieval
 5. Self-RAG / reflection loop
 6. Evidence filtering agent
-7. HyDE (Hypothetical Document Embeddings)
+7. Evidence sufficiency agent
+8. HyDE (Hypothetical Document Embeddings)
 
 ## Project Structure
 
@@ -182,6 +183,7 @@ Question
 -> Hybrid Retrieval
 -> Cross-Encoder Reranking
 -> Evidence Filtering Agent
+-> Evidence Sufficiency Agent
 -> Answer Writer
 -> Self-RAG Critic Loop
 -> Final Answer
@@ -197,9 +199,12 @@ Question
 | Iterative Retrieval | `ENABLE_ITERATIVE_RETRIEVAL` | `--disable-iterative-retrieval` | True |
 | Self-RAG | `ENABLE_SELF_RAG` | `--disable-self-rag` | True |
 | Evidence Filtering | `ENABLE_EVIDENCE_FILTERING` | `--disable-evidence-filtering` | True |
+| Evidence Sufficiency | `ENABLE_EVIDENCE_SUFFICIENCY` | `--disable-evidence-sufficiency` | True |
 | HyDE | `ENABLE_HYDE` | `--disable-hyde` | True |
 
-`--baseline` turns all seven add-ons off.
+`--baseline` turns all add-ons off.
+
+Evidence sufficiency can trigger extra pre-answer web-search retries when the filtered evidence is not enough to answer the question. Limit this loop with `MAX_EVIDENCE_RETRIES` or `--max-evidence-retries` (default: 3).
 
 ## Suggested Report Metrics
 
