@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Annotated
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 class Settings(BaseSettings):
@@ -37,8 +40,12 @@ class Settings(BaseSettings):
     enable_evidence_filtering: bool = Field(default=True, alias="ENABLE_EVIDENCE_FILTERING")
     enable_hyde: bool = Field(default=True, alias="ENABLE_HYDE")
 
+    judge_model: Annotated[str, Field(default="openai/gpt-4.1-mini", alias="JUDGE_MODEL")]
+    judge_temperature: Annotated[float, Field(default=0.0, alias="JUDGE_TEMPERATURE")]
+    ragas_embedding_model: Annotated[str, Field(default="sentence-transformers/all-MiniLM-L6-v2", alias="RAGAS_EMBEDDING_MODEL")]
+
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=_PROJECT_ROOT / ".env",
         env_file_encoding="utf-8",
         populate_by_name=True,
         extra="ignore",
