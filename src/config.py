@@ -13,7 +13,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 class Settings(BaseSettings):
     openrouter_api_key: Annotated[str, Field(alias="OPENROUTER_API_KEY")]
-    openrouter_model: Annotated[str, Field(default="anthropic/claude-3.5-sonnet", alias="OPENROUTER_MODEL")]
+    openrouter_model: Annotated[str, Field(default="moonshotai/kimi-k2.6", alias="OPENROUTER_MODEL")]
     openrouter_temperature: Annotated[float, Field(default=0.1, alias="OPENROUTER_TEMPERATURE")]
     openrouter_base_url: Annotated[str, Field(default="https://openrouter.ai/api/v1", alias="OPENROUTER_BASE_URL")]
 
@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     enable_hyde: bool = Field(default=True, alias="ENABLE_HYDE")
     enable_performance_analysis: bool = Field(default=False, alias="ENABLE_PERFORMANCE_ANALYSIS")
 
-    judge_model: Annotated[str, Field(default="openai/gpt-4.1-mini", alias="JUDGE_MODEL")]
+    judge_model: Annotated[str, Field(default="x-ai/grok-4.3", alias="JUDGE_MODEL")]
     judge_temperature: Annotated[float, Field(default=0.0, alias="JUDGE_TEMPERATURE")]
     ragas_embedding_model: Annotated[str, Field(default="sentence-transformers/all-MiniLM-L6-v2", alias="RAGAS_EMBEDDING_MODEL")]
 
