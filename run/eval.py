@@ -43,6 +43,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--setup", choices=["baseline", "full"], default="full")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument(
+        "--no-resume",
+        action="store_true",
+        help="Disable auto-resume and overwrite output from scratch.",
+    )
+    parser.add_argument(
         "--no-interactive-steps",
         action="store_true",
         help="Skip interactive step selection and use --setup only.",
@@ -93,6 +98,62 @@ def load_questions(path: Path, limit: int | None = None) -> list[dict[str, Any]]
         if limit is not None and len(questions) >= limit:
             break
     return questions
+
+
+def load_existing_progress(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {
+            "completed_ids": set(),
+            "rows": 0,
+            "successes": 0,
+            "errors": 0,
+            "latency_seconds": 0.0,
+            "malformed": 0,
+        }
+
+    completed_ids: set[str] = set()
+    rows = 0
+    successes = 0
+    errors = 0
+    total_latency = 0.0
+    malformed = 0
+
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            payload: Any = json.loads(line)
+        except json.JSONDecodeError:
+            malformed += 1
+            continue
+
+        if not isinstance(payload, dict):
+            malformed += 1
+            continue
+
+        rows += 1
+        question_id = str(payload.get("question_id", "")).strip()
+        if question_id:
+            completed_ids.add(question_id)
+
+        if payload.get("error"):
+            errors += 1
+        else:
+            successes += 1
+
+        latency_value = payload.get("latency_seconds")
+        if isinstance(latency_value, (int, float)):
+            total_latency += float(latency_value)
+
+    return {
+        "completed_ids": completed_ids,
+        "rows": rows,
+        "successes": successes,
+        "errors": errors,
+        "latency_seconds": total_latency,
+        "malformed": malformed,
+    }
 
 
 def configure_setup(settings: Any, setup: str) -> Any:
@@ -192,13 +253,51 @@ def main() -> None:
 
     system = AdvancedMultiAgentRAGSystem(settings)
     questions = load_questions(args.input, args.limit)
+    total_questions = len(questions)
 
-    successes = 0
-    errors = 0
-    total_latency = 0.0
+    resume_enabled = not args.no_resume
+    output_exists = args.output.exists()
+    existing = (
+        load_existing_progress(args.output)
+        if resume_enabled and output_exists
+        else {
+            "completed_ids": set(),
+            "rows": 0,
+            "successes": 0,
+            "errors": 0,
+            "latency_seconds": 0.0,
+            "malformed": 0,
+        }
+    )
+
+    if existing["malformed"]:
+        print(
+            f"warning: ignored {existing['malformed']} malformed existing rows while resuming: {args.output}"
+        )
+
+    completed_ids: set[str] = existing["completed_ids"]
+    pending_questions = [item for item in questions if str(item["id"]) not in completed_ids]
+    already_done = total_questions - len(pending_questions)
+    mode = "fresh" if args.no_resume or not output_exists else "resume"
+    print(
+        f"mode:   {mode}\n"
+        f"total:  {total_questions}\n"
+        f"done:   {already_done}\n"
+        f"todo:   {len(pending_questions)}"
+    )
+    if not pending_questions:
+        print("Nothing to do; evaluation output is already complete.")
+        return
+
+    file_mode = "a" if resume_enabled and output_exists else "w"
+    successes = existing["successes"] if file_mode == "a" else 0
+    errors = existing["errors"] if file_mode == "a" else 0
+    total_latency = existing["latency_seconds"] if file_mode == "a" else 0.0
+    run_successes = 0
+    run_errors = 0
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    with args.output.open("w", encoding="utf-8") as handle:
-        pbar = tqdm(questions, desc=f"eval[{setup_label}]", unit="q")
+    with args.output.open(file_mode, encoding="utf-8") as handle:
+        pbar = tqdm(pending_questions, desc=f"eval[{setup_label}]", unit="q")
         for item in pbar:
             started = time.perf_counter()
             row: dict[str, Any] = {
@@ -233,10 +332,12 @@ def main() -> None:
                     }
                 )
                 successes += 1
+                run_successes += 1
             except Exception as exc:
                 latency = round(time.perf_counter() - started, 3)
                 row.update({"latency_seconds": latency, "error": str(exc)})
                 errors += 1
+                run_errors += 1
 
             total_latency += latency
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -251,8 +352,9 @@ def main() -> None:
             )
 
     print(
-        f"Wrote {successes + errors} rows to {args.output} "
-        f"(ok={successes}, err={errors}, total={total_latency:.1f}s)"
+        f"Processed {run_successes + run_errors} new rows -> {args.output} "
+        f"(new_ok={run_successes}, new_err={run_errors}, "
+        f"all_ok={successes}, all_err={errors}, all_total={total_latency:.1f}s)"
     )
 
 
