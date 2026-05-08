@@ -19,6 +19,17 @@ from typing import Any
 
 from tqdm import tqdm
 
+STEP_OPTIONS: list[tuple[str, str, str]] = [
+    ("enable_hybrid_retrieval", "Hybrid retrieval", "hybrid"),
+    ("enable_cross_encoder_reranking", "Cross-encoder reranking", "rerank"),
+    ("enable_query_decomposition", "Query decomposition", "decompose"),
+    ("enable_iterative_retrieval", "Iterative retrieval", "iterative"),
+    ("enable_self_rag", "Self-RAG", "self-rag"),
+    ("enable_evidence_filtering", "Evidence filtering", "filter"),
+    ("enable_evidence_sufficiency", "Evidence sufficiency checks", "sufficiency"),
+    ("enable_hyde", "HyDE", "hyde"),
+]
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
@@ -31,6 +42,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output", type=Path, default=None, help="Default: data/predictions/<stem>_<setup>.jsonl")
     parser.add_argument("--setup", choices=["baseline", "full"], default="full")
     parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument(
+        "--no-interactive-steps",
+        action="store_true",
+        help="Skip interactive step selection and use --setup only.",
+    )
     return parser
 
 
@@ -92,6 +108,72 @@ def configure_setup(settings: Any, setup: str) -> Any:
     return settings
 
 
+def _render_step_options(enabled: dict[str, bool]) -> str:
+    lines = []
+    for index, (attr, label, key) in enumerate(STEP_OPTIONS, start=1):
+        marker = "x" if enabled.get(attr, True) else " "
+        lines.append(f"{index}. [{marker}] {label} ({key})")
+    return "\n".join(lines)
+
+
+def _interactive_step_selection(settings: Any, setup: str) -> tuple[Any, str]:
+    enabled = {attr: bool(getattr(settings, attr, True)) for attr, _, _ in STEP_OPTIONS}
+
+    if not sys.stdin.isatty():
+        for attr, is_enabled in enabled.items():
+            setattr(settings, attr, is_enabled)
+        selected = [key for attr, _, key in STEP_OPTIONS if enabled[attr]]
+        return settings, ("full" if len(selected) == len(STEP_OPTIONS) else ",".join(selected) or "none")
+
+    while True:
+        print("\nSelect enabled evaluation steps (all enabled by default):")
+        print(_render_step_options(enabled))
+        print("Toggle by number or key (comma-separated), Enter to continue, 'a' all, 'n' none.")
+        raw = input("steps> ").strip().lower()
+        if not raw:
+            break
+        if raw in {"a", "all"}:
+            for attr in enabled:
+                enabled[attr] = True
+            continue
+        if raw in {"n", "none"}:
+            for attr in enabled:
+                enabled[attr] = False
+            continue
+
+        tokens = [token.strip() for token in raw.split(",") if token.strip()]
+        changed = False
+        for token in tokens:
+            if token.isdigit():
+                idx = int(token)
+                if 1 <= idx <= len(STEP_OPTIONS):
+                    attr = STEP_OPTIONS[idx - 1][0]
+                    enabled[attr] = not enabled[attr]
+                    changed = True
+                    continue
+
+            for attr, _, key in STEP_OPTIONS:
+                if token == key:
+                    enabled[attr] = not enabled[attr]
+                    changed = True
+                    break
+
+        if not changed:
+            print("No valid step keys/numbers provided; try again.")
+
+    for attr, is_enabled in enabled.items():
+        setattr(settings, attr, is_enabled)
+
+    selected = [key for attr, _, key in STEP_OPTIONS if enabled[attr]]
+    if len(selected) == len(STEP_OPTIONS):
+        setup_label = "full"
+    elif not selected:
+        setup_label = "none"
+    else:
+        setup_label = ",".join(selected)
+    return settings, setup_label
+
+
 def main() -> None:
     args = build_parser().parse_args()
     from src.config import Settings
@@ -99,11 +181,15 @@ def main() -> None:
     from src.orchestrator import AdvancedMultiAgentRAGSystem
 
     args.input = resolve_input(args.input, BENCHMARKS_DIR)
-    if args.output is None:
-        args.output = derive_output(args.input, PREDICTIONS_DIR, suffix=args.setup)
-    print(f"input:  {args.input}\noutput: {args.output}\nsetup:  {args.setup}")
-
     settings = configure_setup(Settings(), args.setup)
+    setup_label = args.setup
+    if not args.no_interactive_steps:
+        settings, setup_label = _interactive_step_selection(settings, args.setup)
+
+    if args.output is None:
+        args.output = derive_output(args.input, PREDICTIONS_DIR, suffix=setup_label.replace(",", "_"))
+    print(f"input:  {args.input}\noutput: {args.output}\nsetup:  {setup_label}")
+
     system = AdvancedMultiAgentRAGSystem(settings)
     questions = load_questions(args.input, args.limit)
 
@@ -112,7 +198,7 @@ def main() -> None:
     total_latency = 0.0
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("w", encoding="utf-8") as handle:
-        pbar = tqdm(questions, desc=f"eval[{args.setup}]", unit="q")
+        pbar = tqdm(questions, desc=f"eval[{setup_label}]", unit="q")
         for item in pbar:
             started = time.perf_counter()
             row: dict[str, Any] = {
@@ -120,7 +206,7 @@ def main() -> None:
                 "question": item["question"],
                 "gold": item["gold"],
                 "dataset": item["dataset"],
-                "setup": args.setup,
+                "setup": setup_label,
             }
             try:
                 result = system.answer_question(item["question"])
