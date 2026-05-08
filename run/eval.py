@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import argparse
 import json
+import signal
 import time
 from typing import Any
 
@@ -295,61 +296,85 @@ def main() -> None:
     total_latency = existing["latency_seconds"] if file_mode == "a" else 0.0
     run_successes = 0
     run_errors = 0
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    with args.output.open(file_mode, encoding="utf-8") as handle:
-        pbar = tqdm(pending_questions, desc=f"eval[{setup_label}]", unit="q")
-        for item in pbar:
-            started = time.perf_counter()
-            row: dict[str, Any] = {
-                "question_id": item["id"],
-                "question": item["question"],
-                "gold": item["gold"],
-                "dataset": item["dataset"],
-                "setup": setup_label,
-            }
-            try:
-                result = system.answer_question(item["question"])
-                latency = round(time.perf_counter() - started, 3)
-                row.update(
-                    {
-                        "latency_seconds": latency,
-                        "answer": result.answer,
-                        "critic": result.critic.model_dump(),
-                        "features": result.features.model_dump(),
-                        "sources_count": len(result.sources),
-                        "evidence_count": len(result.evidence),
-                        "evidence": [
-                            {
-                                "evidence_id": ev.evidence_id,
-                                "url": ev.url,
-                                "title": ev.title,
-                                "text": ev.text,
-                                "score_final": ev.score_final,
-                                "selected_reason": ev.selected_reason,
-                            }
-                            for ev in result.evidence
-                        ],
-                    }
-                )
-                successes += 1
-                run_successes += 1
-            except Exception as exc:
-                latency = round(time.perf_counter() - started, 3)
-                row.update({"latency_seconds": latency, "error": str(exc)})
-                errors += 1
-                run_errors += 1
+    stop_requested = False
+    interrupt_count = 0
 
-            total_latency += latency
-            handle.write(json.dumps(row, ensure_ascii=False) + "\n")
-            handle.flush()
-
-            done = successes + errors
-            pbar.set_postfix(
-                ok=successes,
-                err=errors,
-                last=f"{latency:.1f}s",
-                avg=f"{total_latency / done:.1f}s",
+    def _handle_sigint(signum: int, frame: Any) -> None:
+        nonlocal stop_requested, interrupt_count
+        interrupt_count += 1
+        if interrupt_count == 1:
+            stop_requested = True
+            print(
+                "\nCtrl+C received; finishing current query before stopping. "
+                "Press Ctrl+C again to abort immediately."
             )
+            return
+        raise KeyboardInterrupt()
+
+    previous_sigint = signal.getsignal(signal.SIGINT)
+    signal.signal(signal.SIGINT, _handle_sigint)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with args.output.open(file_mode, encoding="utf-8") as handle:
+            pbar = tqdm(pending_questions, desc=f"eval[{setup_label}]", unit="q")
+            for item in pbar:
+                started = time.perf_counter()
+                row: dict[str, Any] = {
+                    "question_id": item["id"],
+                    "question": item["question"],
+                    "gold": item["gold"],
+                    "dataset": item["dataset"],
+                    "setup": setup_label,
+                }
+                try:
+                    result = system.answer_question(item["question"])
+                    latency = round(time.perf_counter() - started, 3)
+                    row.update(
+                        {
+                            "latency_seconds": latency,
+                            "answer": result.answer,
+                            "critic": result.critic.model_dump(),
+                            "features": result.features.model_dump(),
+                            "sources_count": len(result.sources),
+                            "evidence_count": len(result.evidence),
+                            "evidence": [
+                                {
+                                    "evidence_id": ev.evidence_id,
+                                    "url": ev.url,
+                                    "title": ev.title,
+                                    "text": ev.text,
+                                    "score_final": ev.score_final,
+                                    "selected_reason": ev.selected_reason,
+                                }
+                                for ev in result.evidence
+                            ],
+                        }
+                    )
+                    successes += 1
+                    run_successes += 1
+                except Exception as exc:
+                    latency = round(time.perf_counter() - started, 3)
+                    row.update({"latency_seconds": latency, "error": str(exc)})
+                    errors += 1
+                    run_errors += 1
+
+                total_latency += latency
+                handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+                handle.flush()
+
+                done = successes + errors
+                pbar.set_postfix(
+                    ok=successes,
+                    err=errors,
+                    last=f"{latency:.1f}s",
+                    avg=f"{total_latency / done:.1f}s",
+                )
+
+                if stop_requested:
+                    pbar.write("Stop requested via Ctrl+C; exiting after current query.")
+                    break
+    finally:
+        signal.signal(signal.SIGINT, previous_sigint)
 
     print(
         f"Processed {run_successes + run_errors} new rows -> {args.output} "
