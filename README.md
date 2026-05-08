@@ -220,3 +220,106 @@ The query planner also chooses Tavily `search_depth` (`basic` or `advanced`) for
 - source count
 - evidence count
 - token and API cost, if provider usage metadata is available
+
+## Data layout
+
+The evaluation pipeline uses the project's `data/` directory as its base path:
+
+```text
+data/
+  benchmarks/   ← question files from scripts/download_benchmarks.py
+  predictions/  ← outputs of run/eval.py
+  scores/       ← outputs of run/score.py and run/aggregate.py
+```
+
+CLI scripts default to the right subdir for their stage and accept either a
+plain filename (resolved against the convention) or an explicit path.
+
+## Benchmarks
+
+Download SimpleQA, PopQA, TriviaQA, and BrowseComp into JSONL files matching
+the question-file schema used below:
+
+```bash
+python scripts/download_benchmarks.py
+python scripts/download_benchmarks.py --datasets browsecomp --sample 50
+```
+
+Sources:
+
+- **SimpleQA** — OpenAI public CSV (no auth)
+- **PopQA** — HuggingFace `akariasai/PopQA`
+- **TriviaQA** — HuggingFace `trivia_qa` (`rc.nocontext` validation split — has gold)
+- **BrowseComp** — OpenAI public CSV, XOR-encrypted with per-row canary; the script
+  decrypts on download. If OpenAI rotates the URL or scheme, sync the loader
+  against `https://github.com/openai/simple-evals/blob/main/browsecomp_eval.py`.
+
+`--sample N` randomly samples N rows per dataset (seeded for reproducibility) — useful
+for the BrowseComp subset, since running the full 1.2k questions through a multi-agent
+pipeline is expensive.
+
+## Scoring (LLM-as-Judge + RAGAS)
+
+Generation and scoring are decoupled. `eval.py` produces `predictions.jsonl`;
+`score.py` consumes it and writes `scored.jsonl` with judge and RAGAS metrics.
+`aggregate.py` produces a per-setup × dataset summary table.
+
+### Question file format with gold answers
+
+For SimpleQA / PopQA / TriviaQA / BrowseComp, include a `gold` field (string or
+list of acceptable answers / aliases) and a `dataset` tag:
+
+```jsonl
+{"id": "sq_1", "question": "Who discovered radium?", "gold": ["Marie Curie", "Curie"], "dataset": "simpleqa"}
+{"id": "tq_1", "question": "...", "gold": ["..."], "dataset": "triviaqa"}
+```
+
+### Run
+
+Bare filenames are resolved under the right `data/` subdir at each stage:
+
+```bash
+# reads data/benchmarks/simpleqa.jsonl, writes data/predictions/simpleqa_full.jsonl
+python run/eval.py simpleqa.jsonl --setup full
+
+# reads data/predictions/simpleqa_full.jsonl, writes data/scores/simpleqa_full.jsonl
+python run/score.py simpleqa_full.jsonl
+
+# reads data/scores/*.jsonl
+python run/aggregate.py simpleqa_full.jsonl --csv data/scores/summary.csv
+```
+
+You can still pass an explicit relative or absolute path to override the default
+location.
+
+Score a subset of metrics or use a different judge model:
+
+```bash
+python run/score.py simpleqa_full.jsonl --metrics correctness,faithfulness
+python run/score.py simpleqa_full.jsonl --judge-model anthropic/claude-haiku-4-5
+```
+
+Score is incremental: re-running with additional metrics only fills in what is
+missing per row, so you can extend the metric set without redoing prior work.
+
+### Metrics
+
+LLM-as-judge (rationale-first):
+
+- `correctness` — answer vs gold, scored **-1 wrong, 0 no-answer, 1 correct (paraphrase ok)**
+- `answer_relevance` — is the answer on-topic, regardless of correctness (0/1)
+- `citation_accuracy` — for each `[Ei]` cite in the answer, does evidence Ei support the claim
+
+RAGAS (per single-turn sample):
+
+- `faithfulness` — answer grounded in retrieved contexts
+- `ragas_answer_relevancy` — RAGAS-style answer relevance via embeddings
+- `context_precision` — relevant contexts ranked high (needs gold)
+- `context_recall` — gold facts present in contexts (needs gold)
+
+The judge model is read from `JUDGE_MODEL` in `.env` (default `openai/gpt-4.1-mini`),
+with temperature `JUDGE_TEMPERATURE` (default `0.0`). It is routed through OpenRouter,
+so use the `provider/model` form (e.g. `anthropic/claude-haiku-4-5`,
+`google/gemini-2.5-flash`). Use a different model than the generator
+(`OPENROUTER_MODEL`) to limit self-preference bias. The CLI flag
+`--judge-model` overrides the env var per run.
