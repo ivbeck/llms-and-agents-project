@@ -75,7 +75,17 @@ class AdvancedMultiAgentRAGSystem:
             logger.info("Evidence filtering applied: %d chunks remain", len(merged_evidence))
         else:
             merged_evidence = merged_evidence[: self.settings.top_k_chunks]
-        return merged_evidence
+        return self._renumber_evidence(merged_evidence)
+
+    @staticmethod
+    def _renumber_evidence(evidence: list[ChunkEvidence]) -> list[ChunkEvidence]:
+        """Reassign contiguous E1, E2, ... ids so downstream agents and judges see
+        a clean pool. Chunk-level ids from the researcher corpus are non-contiguous
+        after filtering and can collide across iterations, which causes the answer
+        writer to cite ids that don't exist (e.g. [E1] when only E2 survived)."""
+        for idx, item in enumerate(evidence, start=1):
+            item.evidence_id = f"E{idx}"
+        return evidence
 
     def _merge_sources(self, source_groups: list[list[SearchResult]]) -> list[SearchResult]:
         merged: OrderedDict[str, SearchResult] = OrderedDict()
@@ -295,6 +305,7 @@ class AdvancedMultiAgentRAGSystem:
             logger.info("Final evidence filtering: %d chunks remain", len(merged_evidence))
         else:
             merged_evidence = merged_evidence[: self.settings.top_k_chunks]
+        merged_evidence = self._renumber_evidence(merged_evidence)
 
         if current_answer:
             final_answer = current_answer

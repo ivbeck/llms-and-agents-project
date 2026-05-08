@@ -215,6 +215,28 @@ class CitationAccuracyJudge:
             ev_lookup[ev_id] = item
             ev_lookup[str(idx)] = item  # also accept bare integer ids
 
+        # Short-circuit ids that are cited in the answer but absent from the
+        # evidence pool. This happens when the answer writer hallucinates a
+        # citation, and the LLM judge would otherwise have to guess about an
+        # invisible piece of evidence.
+        missing_ids = [cid for cid in cited if cid not in ev_lookup]
+        present_ids = [cid for cid in cited if cid in ev_lookup]
+        missing_checks = [
+            CitationCheck(
+                evidence_id=cid,
+                claim="",
+                supported=False,
+                rationale="Cited evidence id is not present in the retrieved evidence pool.",
+            )
+            for cid in missing_ids
+        ]
+        if not present_ids:
+            return CitationAccuracyVerdict(
+                checks=missing_checks,
+                accuracy=0.0,
+                no_citations=False,
+            )
+
         evidence_block = []
         for idx, item in enumerate(evidence, start=1):
             ev_id = str(item.get("evidence_id") or f"E{idx}")
@@ -223,7 +245,7 @@ class CitationAccuracyJudge:
                 f'<untrusted_evidence id="{ev_id}">\n{text}\n</untrusted_evidence>'
             )
 
-        cited_block = ", ".join(cited)
+        cited_block = ", ".join(present_ids)
         system_prompt = (
             "You are a citation auditor for a RAG answer. "
             "For each cited evidence id, decide whether the cited evidence actually "
@@ -260,7 +282,7 @@ Return JSON only:
             raw = self.llm.complete(system_prompt, user_prompt)
             data = extract_json_object(raw)
             checks_raw = data.get("checks", []) or []
-            checks: list[CitationCheck] = []
+            checks: list[CitationCheck] = list(missing_checks)
             for entry in checks_raw:
                 try:
                     checks.append(CitationCheck.model_validate(entry))
@@ -276,4 +298,4 @@ Return JSON only:
             )
         except Exception as exc:
             logger.warning("CitationAccuracyJudge failed: %s", exc)
-            return CitationAccuracyVerdict(checks=[], accuracy=0.0)
+            return CitationAccuracyVerdict(checks=list(missing_checks), accuracy=0.0)
