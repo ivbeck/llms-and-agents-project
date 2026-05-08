@@ -67,19 +67,51 @@ llms-and-agents-project/
 
 ## Setup
 
+If you are new to Python projects, follow these steps exactly.
+
+### 1) Create and activate a virtual environment
+
+Linux / macOS:
+
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+```
+
+Windows PowerShell [enjoy the pain :)]
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+```
+
+If activation worked, your shell prompt usually starts with `(.venv)`.
+
+### 2) Install the project (from `pyproject.toml`)
+
+Install runtime dependencies and CLI scripts (`rag-cli`, `rag-tui`, `rag-bench`, `rag-score`):
+
+```bash
+pip install -e .
+```
+
+If you also want dev tools (pytest/ruff/mypy):
+
+```bash
+pip install -e ".[dev]"
+```
+
+### 3) Create your local env file
+
+```bash
 cp .env.dist .env
 ```
 
 Windows PowerShell:
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
 copy .env.dist .env
 ```
 
@@ -257,6 +289,30 @@ Sources:
 `--sample N` randomly samples N rows per dataset (seeded for reproducibility) — useful
 for the BrowseComp subset, since running the full 1.2k questions through a multi-agent
 pipeline is expensive.
+
+## Evaluation Quick Start (Required First Steps)
+
+Before running any benchmark/evaluation commands, do this once:
+
+```bash
+./scripts/setup_folder_structure.sh
+```
+
+This creates the required `data/` folder layout and downloads benchmark files.
+
+Then check available evaluation CLI options:
+
+```bash
+rag-bench -h
+```
+
+If this command is not found, your environment is usually not active yet. Run:
+
+```bash
+source .venv/bin/activate
+```
+
+Then try `rag-bench -h` again.
 
 ## Scoring (LLM-as-Judge + RAGAS)
 

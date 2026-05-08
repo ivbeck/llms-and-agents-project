@@ -19,7 +19,6 @@ from typing import Any
 
 from tqdm import tqdm
 
-
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(

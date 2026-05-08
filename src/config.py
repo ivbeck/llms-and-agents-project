@@ -8,7 +8,20 @@ from typing import Annotated, Literal
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+def _discover_env_file() -> Path | None:
+    """Locate .env from the active working tree first."""
+    for base in (Path.cwd(), *Path.cwd().parents):
+        candidate = base / ".env"
+        if candidate.is_file():
+            return candidate
+
+    # Fallback for editable installs/run from repo source tree.
+    local_candidate = Path(__file__).resolve().parents[1] / ".env"
+    if local_candidate.is_file():
+        return local_candidate
+
+    return None
 
 
 class Settings(BaseSettings):
@@ -50,8 +63,8 @@ class Settings(BaseSettings):
     ragas_embedding_model: Annotated[str, Field(default="sentence-transformers/all-MiniLM-L6-v2", alias="RAGAS_EMBEDDING_MODEL")]
 
     model_config = SettingsConfigDict(
-        env_file=_PROJECT_ROOT / ".env",
+        validate_default=False,
+        env_file=_discover_env_file(),
         env_file_encoding="utf-8",
         populate_by_name=True,
-        extra="ignore",
     )
