@@ -399,10 +399,6 @@ Current alignment summary from `scripts/Human_Eval_Corr.py`:
 | Answer relevance | N/A (zero variance) | 0.0000 | 100.0 |
 | Citation accuracy | 0.1651 | 0.3638 | 37.5 |
 
-This manual check suggests the LLM judge is reliable on coarse answer grading
-for this sample, but citation scoring is much less stable and should be treated
-as a noisier metric.
-
 To reproduce the alignment summary:
 
 ```bash
