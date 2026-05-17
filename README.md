@@ -372,7 +372,37 @@ RAGAS (per single-turn sample):
 - `ragas_answer_relevancy` — RAGAS-style answer relevance via embeddings
 - `context_precision` — relevant contexts ranked high (needs gold)
 - `context_recall` — gold facts present in contexts (needs gold)
+### Human Evaluation
 
+In addition to the automated judge pipeline, this repo includes a small manual
+audit of the judge outputs in `data/human_eval/`.
+
+- 8 predictions from the `full` setup were sampled across SimpleQA, PopQA, and
+  TriviaQA
+- the sample is stratified by judge correctness class: correct (`+1`), rejected
+  (`0`), and wrong (`-1`)
+- each rating sheet contains the original prediction JSON, the LLM-judge scores,
+  and a checklist for human ratings
+
+Human raters score the same three judge-facing metrics:
+
+- `correctness` — `-1` wrong, `0` rejected / no-answer, `1` correct
+- `answer_relevance` — `0` not on-topic, `1` on-topic
+- `citation_accuracy` — mean support rate across cited evidence items
+
+Current alignment summary from `scripts/Human_Eval_Corr.py`:
+
+| Metric | Pearson (r) | MAE | Exact Match % |
+|---|---:|---:|---:|
+| Correctness | N/A (perfect agreement) | 0.0000 | 100.0 |
+| Answer relevance | N/A (zero variance) | 0.0000 | 100.0 |
+| Citation accuracy | 0.1651 | 0.3638 | 37.5 |
+
+To reproduce the alignment summary:
+
+```bash
+python scripts/Human_Eval_Corr.py
+```
 The judge model is read from `JUDGE_MODEL` in `.env` (default `openai/gpt-4.1-mini`),
 with temperature `JUDGE_TEMPERATURE` (default `0.0`). It is routed through OpenRouter,
 so use the `provider/model` form (e.g. `anthropic/claude-haiku-4-5`,
